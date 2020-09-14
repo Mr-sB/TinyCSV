@@ -7,9 +7,9 @@ Tiny CSV toolkit for .NET. Easy to read and write CSV table.
 * Second line is descriptions.
 * Support cell's form:
 
-| commons | double quotes | multi-line |
-| ------- | ------------- | ---------- |
-|     √   |       √       |      ×     |
+| commons | double quotes | multiline |
+| :-----: | :-----------: | :-------: |
+|    √    |       √       |     ×     |
 
 ## Usage
 More examples can be found in the TinyCSV.Example.
