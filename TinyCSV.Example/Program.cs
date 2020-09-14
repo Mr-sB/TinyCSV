@@ -47,26 +47,22 @@ namespace TinyCSV.Example
             //Read
             //Create csv reader form csv content.
             CSVTableReader csvTableReader = new CSVTableReader(csv);
-            Console.WriteLine("Read from csv form:");
-            for (int i = 0; i < csvTableReader.Column; i++)
-                Console.Write(csvTableReader.Headers[i] + (i < csvTableReader.Column - 1 ? ',' : '\n'));
-            for (int i = 0; i < csvTableReader.Column; i++)
-                Console.Write(csvTableReader.Descriptions[i] + (i < csvTableReader.Column - 1 ? ',' : '\n'));
-            for (int i = 0; i < csvTableReader.RecordRow; i++)
-                for (int j = 0; j < csvTableReader.Column; j++)
-                    Console.Write(csvTableReader.Records[i].CellArray[j] + (j < csvTableReader.Column - 1 ? ',' : '\n'));
-            Console.WriteLine();
+            Console.WriteLine("Read from csv form:\n" + csvTableReader);
             
             //Write
             //Create csv writer from csv reader.
             CSVTableWriter csvTableWriter2 = new CSVTableWriter(csvTableReader);
+            csvTableWriter2.RemoveHeader(5);
+            csvTableWriter2.RemoveDescription(5);
+            csvTableWriter2.RemoveRecord(0);
+            foreach (var record in csvTableWriter2.Records)
+                record.RemoveCell(5);
             var record3 = new CSVRecordWriter();
             record3.AddCell("3");
             record3.AddCell("#cccccc");
             record3.AddCell("5");
             record3.AddCell("string with, comma");
             record3.AddCell("\"string with\", comma and \"double quote");
-            record3.AddCell("7;8;9|10;11;12|7;7;7");
             csvTableWriter2.AddRecord(record3);
             Console.WriteLine("Write to csv form:\n" + csvTableWriter2);
         }

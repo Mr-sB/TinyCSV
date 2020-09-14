@@ -1,3 +1,6 @@
+using System;
+using System.Text;
+
 namespace TinyCSV
 {
     /// <summary>
@@ -11,6 +14,7 @@ namespace TinyCSV
         public readonly CSVRecordReader[] Records;
         public readonly int Column;
         public readonly int RecordRow;
+        private StringBuilder mStringBuilder;
 
         public CSVTableReader(string svContent)
         {
@@ -30,6 +34,27 @@ namespace TinyCSV
             else
                 Records = new CSVRecordReader[0];
             RecordRow = Records.Length;
+        }
+
+        public override string ToString()
+        {
+            if (mStringBuilder == null)
+                mStringBuilder = new StringBuilder();
+            for (int i = 0, len = Headers.Length; i < len; i++)
+            {
+                mStringBuilder.Append(Headers[i]);
+                mStringBuilder.Append(i < len - 1 ? "," : Environment.NewLine);
+            }
+            for (int i = 0, len = Descriptions.Length; i < len; i++)
+            {
+                mStringBuilder.Append(Descriptions[i]);
+                mStringBuilder.Append(i < len - 1 ? "," : Environment.NewLine);
+            }
+            foreach (var record in Records)
+                mStringBuilder.AppendLine(record.ToString());
+            string decodeCSV = mStringBuilder.ToString();
+            mStringBuilder.Length = 0;
+            return decodeCSV;
         }
     }
 }

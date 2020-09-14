@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace TinyCSV
@@ -28,6 +29,19 @@ namespace TinyCSV
         public void AddCell(string cell)
         {
             Cells.Add(cell);
+        }
+        
+        public void RemoveCell(int index)
+        {
+            try
+            {
+                Cells.RemoveAt(index);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public override string ToString()

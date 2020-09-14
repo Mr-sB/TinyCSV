@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,6 +12,7 @@ namespace TinyCSV
         public readonly List<string> Headers;
         public readonly List<string> Descriptions;
         public readonly List<CSVRecordWriter> Records;
+        private StringBuilder mStringBuilder;
 
         public CSVTableWriter()
         {
@@ -61,18 +63,60 @@ namespace TinyCSV
         {
             Records.Add(csvRecordWriter);
         }
+
+        public void RemoveHeader(int index)
+        {
+            try
+            {
+                Headers.RemoveAt(index);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public void RemoveDescription(int index)
+        {
+            try
+            {
+                Descriptions.RemoveAt(index);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+        
+        public void RemoveRecord(int index)
+        {
+            try
+            {
+                Records.RemoveAt(index);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
         
         /// <summary>
         /// Get a csv form string.
         /// </summary>
         public override string ToString()
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine(Headers.GetCSVEncodeRow());
-            stringBuilder.AppendLine(Descriptions.GetCSVEncodeRow());
+            if (mStringBuilder == null)
+                mStringBuilder = new StringBuilder();
+            mStringBuilder.AppendLine(Headers.GetCSVEncodeRow());
+            mStringBuilder.AppendLine(Descriptions.GetCSVEncodeRow());
             foreach (var record in Records)
-                stringBuilder.AppendLine(record.ToString());
-            return stringBuilder.ToString();
+                mStringBuilder.AppendLine(record.ToString());
+            string encodeCSV = mStringBuilder.ToString();
+            mStringBuilder.Length = 0;
+            return encodeCSV;
         }
     }
 }

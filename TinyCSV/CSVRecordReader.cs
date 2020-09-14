@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace TinyCSV
 {
@@ -8,6 +9,7 @@ namespace TinyCSV
         public readonly Dictionary<string, string> CellDict;
         public readonly string[] CellArray;
         public readonly string RawRecord;
+        private StringBuilder mStringBuilder;
 
         public CSVRecordReader(string[] headers, string record)
         {
@@ -22,6 +24,21 @@ namespace TinyCSV
                 else
                     Console.WriteLine("Has same header: " + headers[i]);
             }
+        }
+
+        public override string ToString()
+        {
+            if (mStringBuilder == null)
+                mStringBuilder = new StringBuilder();
+            for (int i = 0, len = CellArray.Length; i < len; i++)
+            {
+                mStringBuilder.Append(CellArray[i]);
+                if(i < len - 1)
+                    mStringBuilder.Append(',');
+            }
+            string decodeCSV = mStringBuilder.ToString();
+            mStringBuilder.Length = 0;
+            return decodeCSV;
         }
     }
 }
