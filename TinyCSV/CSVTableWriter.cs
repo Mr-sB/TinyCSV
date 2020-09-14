@@ -72,8 +72,7 @@ namespace TinyCSV
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                throw new CSVException("Index was out of range!", e);
             }
         }
 
@@ -85,8 +84,7 @@ namespace TinyCSV
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                throw new CSVException("Index was out of range!", e);
             }
         }
         
@@ -98,8 +96,7 @@ namespace TinyCSV
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                throw new CSVException("Index was out of range!", e);
             }
         }
         
