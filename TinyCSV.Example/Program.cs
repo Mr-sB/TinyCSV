@@ -65,6 +65,8 @@ namespace TinyCSV.Example
             record3.AddCell("\"string with\", comma and \"double quote");
             csvTableWriter2.AddRecord(record3);
             Console.WriteLine("Write to csv form:\n" + csvTableWriter2);
+
+            Console.ReadKey();
         }
     }
 }
