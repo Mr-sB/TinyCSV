@@ -16,10 +16,10 @@ namespace TinyCSV
         public readonly int RecordRow;
         private StringBuilder mStringBuilder;
 
-        public CSVTableReader(string svContent)
+        public CSVTableReader(string svContent, bool enableMultiline = true)
         {
             RawCSVContent = svContent;
-            string[] rows = RawCSVContent.GetCSVRows();
+            string[] rows = RawCSVContent.GetCSVRows(enableMultiline).ToArray();
             int recordLen = rows.Length;
             Headers = recordLen > 0 ? rows[0].GetCSVDecodeRow().ToArray() : new string[0];
             Column = Headers.Length;

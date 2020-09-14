@@ -21,9 +21,9 @@ namespace TinyCSV
             Records = new List<CSVRecordWriter>();
         }
 
-        public CSVTableWriter(string svContent)
+        public CSVTableWriter(string svContent, bool enableMultiline)
         {
-            string[] rows = svContent.GetCSVRows();
+            string[] rows = svContent.GetCSVRows(enableMultiline).ToArray();
             int recordLen = rows.Length;
             Headers = recordLen > 0 ? rows[0].GetCSVDecodeRow() : new List<string>();
             Descriptions = recordLen > 1 ? rows[1].GetCSVDecodeRow(Headers.Count) : new List<string>();
