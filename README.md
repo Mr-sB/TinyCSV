@@ -26,7 +26,7 @@ CSVTableWriter csvTableWriter = new CSVTableWriter();
 //Add headers.
 csvTableWriter.AddHeader("Data1");
 //Add descriptions.
-csvTableWriter.AddDescription("int");
+csvTableWriter.AddDescription("string");
 //Add records.
 var record1 = new CSVRecordWriter();
 record1.AddCell("\"string with double quote");
