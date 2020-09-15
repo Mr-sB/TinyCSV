@@ -10,7 +10,7 @@ Tiny CSV toolkit for .NET. Easy to read and write CSV table.
 | commons | double quotes | multiline |
 | :-----: | :-----------: | :-------: |
 |    √    |       √       |     √     |
-* You can choose whether to support multiline cells.
+* You can choose whether to support multiline cells. Default is support.
 
 ## Usage
 More examples can be found in the TinyCSV.Example.
