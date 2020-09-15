@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace TinyCSV.Example
 {
@@ -49,12 +50,14 @@ namespace TinyCSV.Example
             record3.AddCell("7;8;9|10;11;12|7;7;7");
             csvTableWriter.AddRecord(record3);
             //Get csv form string.
-            string csv = csvTableWriter.ToString();
-            Console.WriteLine("Write to csv form:\n" + csv);
+            string csv1 = csvTableWriter.ToString();
+            Console.WriteLine("Write to csv form:\n" + csv1);
+            using (StreamWriter streamWriter = new StreamWriter(Path.Combine(Environment.CurrentDirectory, "CSVExample1.csv")))
+                streamWriter.Write(csv1);
             
             //Read
             //Create csv reader form csv content.
-            CSVTableReader csvTableReader = new CSVTableReader(csv);
+            CSVTableReader csvTableReader = new CSVTableReader(csv1);
             Console.WriteLine("Read from csv form:\n" + csvTableReader);
             
             //Write
@@ -73,6 +76,10 @@ namespace TinyCSV.Example
             record100.AddCell("\"string with\", comma and \"double quote");
             csvTableWriter2.AddRecord(record100);
             Console.WriteLine("Write to csv form:\n" + csvTableWriter2);
+            //Get csv form string.
+            string csv2 = csvTableWriter2.ToString();
+            using (StreamWriter streamWriter = new StreamWriter(Path.Combine(Environment.CurrentDirectory, "CSVExample2.csv")))
+                streamWriter.Write(csv2);
 
             Console.ReadKey();
         }
