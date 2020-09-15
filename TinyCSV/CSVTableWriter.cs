@@ -25,7 +25,7 @@ namespace TinyCSV
         /// Create a CSVTableWriter by csv content.
         /// </summary>
         /// <param name="svContent">CSV content.</param>
-        /// <param name="supportCellMultiline">If true, support multiline cell but slower, otherwise not support multiline cell but faster.</param>
+        /// <param name="supportCellMultiline">If true, support multiline cells but slower, otherwise not support multiline cells but faster.</param>
         public CSVTableWriter(string svContent, bool supportCellMultiline)
         {
             string[] rows = svContent.GetCSVRows(supportCellMultiline).ToArray();

@@ -20,7 +20,7 @@ namespace TinyCSV
         /// Create a CSVTableReader by csv content.
         /// </summary>
         /// <param name="svContent">CSV content.</param>
-        /// <param name="supportCellMultiline">If true, support multiline cell but slower, otherwise not support multiline cell but faster.</param>
+        /// <param name="supportCellMultiline">If true, support multiline cells but slower, otherwise not support multiline cells but faster.</param>
         public CSVTableReader(string svContent, bool supportCellMultiline = true)
         {
             RawCSVContent = svContent;
