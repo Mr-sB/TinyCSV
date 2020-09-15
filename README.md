@@ -9,7 +9,9 @@ Tiny CSV toolkit for .NET. Easy to read and write CSV table.
 
 | commons | double quotes | multiline |
 | :-----: | :-----------: | :-------: |
-|    √    |       √       |     ×     |
+|    √    |       √       |     √     |
+* You can choose whether to support multiline cells.
+Support multiline cells will be slower.
 
 ## Usage
 More examples can be found in the TinyCSV.Example.
@@ -29,7 +31,7 @@ csvTableWriter.AddHeader("Data1");
 csvTableWriter.AddDescription("string");
 //Add records.
 var record1 = new CSVRecordWriter();
-record1.AddCell("\"string with double quote");
+record1.AddCell("string with double quote\" and comma, and \n\\n and \r\n\\r\\n");
 csvTableWriter.AddRecord(record1);
 //Get csv form string.
 string csv = csvTableWriter.ToString();
