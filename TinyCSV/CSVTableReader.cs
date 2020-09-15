@@ -16,10 +16,15 @@ namespace TinyCSV
         public readonly int RecordRow;
         private StringBuilder mStringBuilder;
 
-        public CSVTableReader(string svContent, bool enableMultiline = true)
+        /// <summary>
+        /// Create a CSVTableReader by csv content.
+        /// </summary>
+        /// <param name="svContent">CSV content.</param>
+        /// <param name="supportCellMultiline">If true, support multiline cell but slower, otherwise not support multiline cell but faster.</param>
+        public CSVTableReader(string svContent, bool supportCellMultiline = true)
         {
             RawCSVContent = svContent;
-            string[] rows = RawCSVContent.GetCSVRows(enableMultiline).ToArray();
+            string[] rows = RawCSVContent.GetCSVRows(supportCellMultiline).ToArray();
             int recordLen = rows.Length;
             Headers = recordLen > 0 ? rows[0].GetCSVDecodeRow().ToArray() : new string[0];
             Column = Headers.Length;

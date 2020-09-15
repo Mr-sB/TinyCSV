@@ -21,9 +21,14 @@ namespace TinyCSV
             Records = new List<CSVRecordWriter>();
         }
 
-        public CSVTableWriter(string svContent, bool enableMultiline)
+        /// <summary>
+        /// Create a CSVTableWriter by csv content.
+        /// </summary>
+        /// <param name="svContent">CSV content.</param>
+        /// <param name="supportCellMultiline">If true, support multiline cell but slower, otherwise not support multiline cell but faster.</param>
+        public CSVTableWriter(string svContent, bool supportCellMultiline)
         {
-            string[] rows = svContent.GetCSVRows(enableMultiline).ToArray();
+            string[] rows = svContent.GetCSVRows(supportCellMultiline).ToArray();
             int recordLen = rows.Length;
             Headers = recordLen > 0 ? rows[0].GetCSVDecodeRow() : new List<string>();
             Descriptions = recordLen > 1 ? rows[1].GetCSVDecodeRow(Headers.Count) : new List<string>();

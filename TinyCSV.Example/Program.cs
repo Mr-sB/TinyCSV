@@ -37,9 +37,17 @@ namespace TinyCSV.Example
             record2.AddCell("#bbbbbb");
             record2.AddCell("4");
             record2.AddCell("string with, comma");
-            record2.AddCell("\"string with\", comma and \"double quote");
+            record2.AddCell("string\" with\", comma and \"double quote");
             record2.AddCell("7;8;9|10;11;12|7;7;7");
             csvTableWriter.AddRecord(record2);
+            var record3 = new CSVRecordWriter();
+            record3.AddCell("3");
+            record3.AddCell("#ccc");
+            record3.AddCell("5");
+            record3.AddCell("string with \n \\n and \r\n \\r\\n");
+            record3.AddCell("string\" with \n \\n and \", comma and \"double quote and \r\n \\r\\n");
+            record3.AddCell("7;8;9|10;11;12|7;7;7");
+            csvTableWriter.AddRecord(record3);
             //Get csv form string.
             string csv = csvTableWriter.ToString();
             Console.WriteLine("Write to csv form:\n" + csv);
@@ -57,13 +65,13 @@ namespace TinyCSV.Example
             csvTableWriter2.RemoveRecord(0);
             foreach (var record in csvTableWriter2.Records)
                 record.RemoveCell(5);
-            var record3 = new CSVRecordWriter();
-            record3.AddCell("3");
-            record3.AddCell("#cccccc");
-            record3.AddCell("5");
-            record3.AddCell("string with, comma");
-            record3.AddCell("\"string with\", comma and \"double quote");
-            csvTableWriter2.AddRecord(record3);
+            var record100 = new CSVRecordWriter();
+            record100.AddCell("100");
+            record100.AddCell("#cccccc");
+            record100.AddCell("5");
+            record100.AddCell("string with, comma");
+            record100.AddCell("\"string with\", comma and \"double quote");
+            csvTableWriter2.AddRecord(record100);
             Console.WriteLine("Write to csv form:\n" + csvTableWriter2);
 
             Console.ReadKey();
