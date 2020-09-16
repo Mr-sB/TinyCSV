@@ -11,7 +11,7 @@ Tiny CSV toolkit for .NET. Easy to read and write CSV table.
 * Second line is descriptions.
 * Support cell's form:
 
-| commons | double quotes | multiline |
+| commas  | double quotes | multiline |
 | :-----: | :-----------: | :-------: |
 |    √    |       √       |     √     |
 * You can choose whether to support multiline cells. Default is support.
