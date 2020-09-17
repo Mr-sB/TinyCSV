@@ -9,14 +9,22 @@ namespace TinyCSV
         public readonly Dictionary<string, string> CellDict;
         public readonly string[] CellArray;
         public readonly string RawRecord;
+        public readonly char CellSeparator;
         private StringBuilder mStringBuilder;
 
-        public CSVRecordReader(string[] headers, string record)
+        /// <summary>
+        /// Create a CSVRecordReader.
+        /// </summary>
+        /// <param name="headers">Headres</param>
+        /// <param name="record">CSV row data.</param>
+        /// <param name="cellSeparator">CSV cells separator.</param>
+        public CSVRecordReader(string[] headers, string record, char cellSeparator = CSVDataHelper.CommaCharacter)
         {
             RawRecord = record;
+            CellSeparator = cellSeparator;
             int column = headers.Length;
             CellDict = new Dictionary<string, string>(column);
-            CellArray = RawRecord.GetCSVDecodeRow(column).ToArray();
+            CellArray = RawRecord.GetCSVDecodeRow(cellSeparator, column).ToArray();
             for (int i = 0, cellLen = CellArray.Length; i < column; i++)
             {
                 if(!CellDict.ContainsKey(headers[i]))
@@ -34,7 +42,7 @@ namespace TinyCSV
             {
                 mStringBuilder.Append(CellArray[i]);
                 if(i < len - 1)
-                    mStringBuilder.Append(',');
+                    mStringBuilder.Append(CellSeparator);
             }
             string decodeCSV = mStringBuilder.ToString();
             mStringBuilder.Length = 0;

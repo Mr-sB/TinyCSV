@@ -6,23 +6,47 @@ namespace TinyCSV
     public class CSVRecordWriter
     {
         public readonly List<string> Cells;
+        public readonly char CellSeparator;
 
-        public CSVRecordWriter()
+        /// <summary>
+        /// Create a empty CSVRecordWriter.
+        /// <param name="cellSeparator">CSV cells separator.</param>
+        /// </summary>
+        public CSVRecordWriter(char cellSeparator = CSVDataHelper.CommaCharacter)
         {
             Cells = new List<string>();
+            CellSeparator = cellSeparator;
         }
 
-        public CSVRecordWriter(string record, int capacity = 0)
+        /// <summary>
+        /// Create a CSVRecordWriter by CSV row data.
+        /// </summary>
+        /// <param name="record">CSV row data.</param>
+        /// <param name="cellSeparator">CSV cells separator.</param>
+        /// <param name="capacity">List capacity.</param>
+        public CSVRecordWriter(string record, char cellSeparator = CSVDataHelper.CommaCharacter, int capacity = 0)
         {
-            Cells = record.GetCSVDecodeRow(capacity);
+            Cells = record.GetCSVDecodeRow(cellSeparator, capacity);
+            CellSeparator = cellSeparator;
         }
         
-        public CSVRecordWriter(IEnumerable<string> cells)
+        /// <summary>
+        /// Create a CSVRecordWriter by cells.
+        /// </summary>
+        /// <param name="cells">IEnumerable cells.</param>
+        /// <param name="cellSeparator">CSV cells separator.</param>
+        public CSVRecordWriter(IEnumerable<string> cells, char cellSeparator = CSVDataHelper.CommaCharacter)
         {
             Cells = new List<string>(cells);
+            CellSeparator = cellSeparator;
         }
 
-        public CSVRecordWriter(CSVRecordReader csvRecordReader) : this(csvRecordReader.CellArray)
+        /// <summary>
+        /// Create a CSVRecordWriter by CSVRecordReader.
+        /// </summary>
+        /// <param name="csvRecordReader">CSVRecordReader.</param>
+        /// <param name="cellSeparator">CSV cells separator.</param>
+        public CSVRecordWriter(CSVRecordReader csvRecordReader, char cellSeparator = CSVDataHelper.CommaCharacter) : this(csvRecordReader.CellArray, cellSeparator)
         {
         }
 
@@ -45,7 +69,7 @@ namespace TinyCSV
         
         public override string ToString()
         {
-            return Cells.GetCSVEncodeRow();
+            return Cells.GetCSVEncodeRow(CellSeparator);
         }
     }
 }

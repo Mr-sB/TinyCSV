@@ -8,21 +8,39 @@ namespace TinyCSV
     {
         public const char DoubleQuoteCharacter = '\"';
         public const char CommaCharacter = ',';
-        public static string[] NewLineSeparators = {"\n", "\r\n"};
-        public static int NewLineSeparatorsLength = NewLineSeparators.Length;
+        public static readonly string[] NewLineSeparators = {"\n", "\r\n"};
+        public static readonly int NewLineSeparatorsLength = NewLineSeparators.Length;
+        public static readonly string[] EmptyStringArray = new string[0];
         
         /// <summary>
         /// Split csv table by \n or \r\n.
         /// </summary>
         /// <param name="csvContent">CSV content.</param>
+        /// <param name="cellSeparator">CSV cells separator.</param>
         /// <param name="supportCellMultiline">If true, support multiline cell but slower, otherwise not support multiline cell but faster.</param>
         /// <returns>CSV rows.</returns>
-        public static List<string> GetCSVRows(this string csvContent, bool supportCellMultiline)
+        public static string[] GetCSVRowArray(this string csvContent, char cellSeparator = CommaCharacter, bool supportCellMultiline = true)
+        {
+            if (string.IsNullOrEmpty(csvContent)) return EmptyStringArray;
+            //Split by \n or \r\n.
+            if (!supportCellMultiline)
+                return csvContent.Split(NewLineSeparators, StringSplitOptions.RemoveEmptyEntries);
+            return csvContent.GetCSVRowList(cellSeparator, true).ToArray();
+        }
+        
+        /// <summary>
+        /// Split csv table by \n or \r\n.
+        /// </summary>
+        /// <param name="csvContent">CSV content.</param>
+        /// <param name="cellSeparator">CSV cells separator.</param>
+        /// <param name="supportCellMultiline">If true, support multiline cell but slower, otherwise not support multiline cell but faster.</param>
+        /// <returns>CSV rows.</returns>
+        public static List<string> GetCSVRowList(this string csvContent, char cellSeparator = CommaCharacter, bool supportCellMultiline = true)
         {
             if (string.IsNullOrEmpty(csvContent)) return new List<string>();
             //Split by \n or \r\n.
             if (!supportCellMultiline)
-                return csvContent.StringSplit(NewLineSeparators, StringSplitOptions.RemoveEmptyEntries);
+                return new List<string>(csvContent.Split(NewLineSeparators, StringSplitOptions.RemoveEmptyEntries));
             
             List<string> rows = new List<string>();
 
@@ -33,68 +51,65 @@ namespace TinyCSV
             for (int csvIndex = 0, len = csvContent.Length; csvIndex < len; csvIndex++)
             {
                 char ch = csvContent[csvIndex];
-                switch (ch)
+                if (ch == DoubleQuoteCharacter)
                 {
-                    case DoubleQuoteCharacter:
-                        //The cell start with \", then all characters need to read, include new line.
-                        if (isCellBeginning)
-                            cellNeedEscape = true;
-                        else if (cellNeedEscape)
-                            passEvenDoubleQuotes = !passEvenDoubleQuotes;
-                        stringBuilder.Append(ch);
-                        break;
-                    case CommaCharacter:
-                        //Do not need escape or pass even double quotes character means the cell is end.
-                        //csv字段内的\"必定是偶数个，而需要转义的情况下\"变为\"\"，所以尾部必定有个落单的\"与起始的\"形成一对，所以包含在字段内的\,前面必定有奇数个\"
-                        stringBuilder.Append(ch);
-                        if (!cellNeedEscape || passEvenDoubleQuotes)
+                    //The cell start with \", then all characters need to read, include new line.
+                    if (isCellBeginning)
+                        cellNeedEscape = true;
+                    else if (cellNeedEscape)
+                        passEvenDoubleQuotes = !passEvenDoubleQuotes;
+                    stringBuilder.Append(ch);
+                }
+                else if (ch == cellSeparator)
+                {
+                    //Do not need escape or pass even double quotes character means the cell is end.
+                    //csv字段内的\"必定是偶数个，而需要转义的情况下\"变为\"\"，所以尾部必定有个落单的\"与起始的\"形成一对，所以包含在字段内的\,前面必定有奇数个\"
+                    stringBuilder.Append(ch);
+                    if (!cellNeedEscape || passEvenDoubleQuotes)
+                    {
+                        isCellBeginning = true;
+                        cellNeedEscape = false;
+                        passEvenDoubleQuotes = false;
+                        continue;
+                    }
+                }
+                else if (cellNeedEscape && !passEvenDoubleQuotes) //Need escape and pass odd double quotes character means the cell is not end.
+                    stringBuilder.Append(ch);
+                else
+                {
+                    //Judge whether it is new line.
+                    bool isNewLine = false;
+                    for (int separatorsIndex = 0; separatorsIndex < NewLineSeparatorsLength; separatorsIndex++)
+                    {
+                        string newLineSeparator = NewLineSeparators[separatorsIndex];
+                        int newLineSeparatorLen = newLineSeparator.Length;
+                        if (ch == newLineSeparator[0] && csvIndex + newLineSeparatorLen <= len)
                         {
-                            isCellBeginning = true;
-                            cellNeedEscape = false;
-                            passEvenDoubleQuotes = false;
-                            continue;
-                        }
-                        break;
-                    default:
-                        //Need escape and pass odd double quotes character means the cell is not end.
-                        if (cellNeedEscape && !passEvenDoubleQuotes)
-                            stringBuilder.Append(ch);
-                        else
-                        {
-                            //Judge whether it is new line.
-                            bool isNewLine = false;
-                            for (int separatorsIndex = 0; separatorsIndex < NewLineSeparatorsLength; separatorsIndex++)
+                            isNewLine = true;
+                            for (int separatorIndex = 1; separatorIndex < newLineSeparatorLen; separatorIndex++)
                             {
-                                string separator = NewLineSeparators[separatorsIndex];
-                                int separatorLen = separator.Length;
-                                if (ch == separator[0] && csvIndex + separatorLen <= len)
-                                {
-                                    isNewLine = true;
-                                    for (int separatorIndex = 1; separatorIndex < separatorLen; separatorIndex++)
-                                    {
-                                        if (csvContent[csvIndex + separatorIndex] == separator[separatorIndex]) continue;
-                                        isNewLine = false;
-                                        break;
-                                    }
-                                    if (isNewLine)
-                                    {
-                                        //Skip empty row.
-                                        if(stringBuilder.Length != 0)
-                                            rows.Add(stringBuilder.ToString());
-                                        stringBuilder.Clear();
-                                        //Skip new line string.
-                                        csvIndex += separatorLen - 1;
-                                        isCellBeginning = true;
-                                        cellNeedEscape = false;
-                                        passEvenDoubleQuotes = false;
-                                        break;
-                                    }
-                                }
+                                if (csvContent[csvIndex + separatorIndex] == newLineSeparator[separatorIndex]) continue;
+                                isNewLine = false;
+                                break;
                             }
-                            if(!isNewLine)
-                                stringBuilder.Append(ch);
+
+                            if (isNewLine)
+                            {
+                                //Skip empty row.
+                                if (stringBuilder.Length != 0)
+                                    rows.Add(stringBuilder.ToString());
+                                stringBuilder.Clear();
+                                //Skip new line string.
+                                csvIndex += newLineSeparatorLen - 1;
+                                isCellBeginning = true;
+                                cellNeedEscape = false;
+                                passEvenDoubleQuotes = false;
+                                break;
+                            }
                         }
-                        break;
+                    }
+                    if (!isNewLine)
+                        stringBuilder.Append(ch);
                 }
                 isCellBeginning = false;
             }
@@ -109,7 +124,11 @@ namespace TinyCSV
         /// <summary>
         /// Decode csv row content.
         /// </summary>
-        public static List<string> GetCSVDecodeRow(this string rowContent, int capacity = 0)
+        /// <param name="rowContent">CSV row content.</param>
+        /// <param name="cellSeparator">CSV cells separator.</param>
+        /// <param name="capacity">List capacity.</param>
+        /// <returns>Cell list.</returns>
+        public static List<string> GetCSVDecodeRow(this string rowContent, char cellSeparator = CommaCharacter, int capacity = 0)
         {
             List<string> cellValues = new List<string>(capacity);
             StringBuilder cellValueBuilder = new StringBuilder();
@@ -118,39 +137,37 @@ namespace TinyCSV
             bool canAddEscapeDoubleQuote = false;
             foreach (var ch in rowContent)
             {
-                switch (ch)
+                if (ch == DoubleQuoteCharacter)
                 {
-                    case DoubleQuoteCharacter:
-                        if (isCellBeginning) //The cell start with \", then all \" need escape(change to \"\") and add \" to cell's beginning and ending.
-                            cellNeedEscape = true;
-                        else if(cellNeedEscape)
-                        {
-                            if (canAddEscapeDoubleQuote)
-                                cellValueBuilder.Append(ch);
-                            canAddEscapeDoubleQuote = !canAddEscapeDoubleQuote;
-                        }
-                        else
+                    if (isCellBeginning) //The cell start with \", then all \" need escape(change to \"\") and add \" to cell's beginning and ending.
+                        cellNeedEscape = true;
+                    else if(cellNeedEscape)
+                    {
+                        if (canAddEscapeDoubleQuote)
                             cellValueBuilder.Append(ch);
-                        break;
-                    case CommaCharacter:
-                        //Do not need escape or can not add escape character \" means the cell is end.
-                        //能添加\"的时候代表已经经过了偶数个\"（canAddEscapeDoubleQuote从false变为true代表经过了奇数次变化，加上字段起始的\",所以是偶数个\"）
-                        //csv字段内的\"必定是偶数个，而需要转义的情况下\"变为\"\"，所以尾部必定有个落单的\"与起始的\"形成一对，所以包含在字段内的\,前面必定有奇数个\"
-                        if (!cellNeedEscape || canAddEscapeDoubleQuote)
-                        {
-                            cellValues.Add(cellValueBuilder.ToString());
-                            cellValueBuilder.Clear();
-                            isCellBeginning = true;
-                            cellNeedEscape = false;
-                            canAddEscapeDoubleQuote = false;
-                            continue;
-                        }
+                        canAddEscapeDoubleQuote = !canAddEscapeDoubleQuote;
+                    }
+                    else
                         cellValueBuilder.Append(ch);
-                        break;
-                    default:
-                        cellValueBuilder.Append(ch);
-                        break;
                 }
+                else if(ch == cellSeparator)
+                {
+                    //Do not need escape or can not add escape character \" means the cell is end.
+                    //能添加\"的时候代表已经经过了偶数个\"（canAddEscapeDoubleQuote从false变为true代表经过了奇数次变化，加上字段起始的\",所以是偶数个\"）
+                    //csv字段内的\"必定是偶数个，而需要转义的情况下\"变为\"\"，所以尾部必定有个落单的\"与起始的\"形成一对，所以包含在字段内的\,前面必定有奇数个\"
+                    if (!cellNeedEscape || canAddEscapeDoubleQuote)
+                    {
+                        cellValues.Add(cellValueBuilder.ToString());
+                        cellValueBuilder.Clear();
+                        isCellBeginning = true;
+                        cellNeedEscape = false;
+                        canAddEscapeDoubleQuote = false;
+                        continue;
+                    }
+                    cellValueBuilder.Append(ch);
+                }
+                else
+                    cellValueBuilder.Append(ch);
                 isCellBeginning = false;
             }
             cellValues.Add(cellValueBuilder.ToString());
@@ -161,7 +178,10 @@ namespace TinyCSV
         /// <summary>
         /// Encode cells to csv form.
         /// </summary>
-        public static string GetCSVEncodeRow(this List<string> cellList)
+        /// <param name="cellList">Cell list.</param>
+        /// <param name="cellSeparator">CSV cells separator.</param>
+        /// <returns>Encode row.</returns>
+        public static string GetCSVEncodeRow(this List<string> cellList, char cellSeparator = CommaCharacter)
         {
             if (cellList == null || cellList.Count == 0) return string.Empty;
             StringBuilder stringBuilder = new StringBuilder();
@@ -174,78 +194,76 @@ namespace TinyCSV
                 for (int cellIndex = 0, len = cell.Length; cellIndex < len; cellIndex++)
                 {
                     char ch = cell[cellIndex];
-                    switch (ch)
+                    if (ch == DoubleQuoteCharacter)
                     {
-                        case DoubleQuoteCharacter:
-                            if (cellIndex == 0)
+                        if (cellIndex == 0)
+                        {
+                            cellNeedEscape = true;
+                            stringBuilder.Append(DoubleQuoteCharacter);//Add \" to beginning.
+                        }
+                        stringBuilder.Append(ch);
+                        if (cellNeedEscape)
+                            stringBuilder.Append(ch);// \" change to \"\"
+                        else//Record escape character \" insert index.
+                            doubleQuoteInsertIndices.Enqueue(stringBuilder.Length + doubleQuoteInsertIndices.Count);
+                    }
+                    else if (ch == cellSeparator)
+                    {
+                        if (!cellNeedEscape)
+                        {
+                            //The cell has comma character, so the preceding \" needs to be changed to \"\" and add \" in the cell's beginning.
+                            cellNeedEscape = true;
+                            while (doubleQuoteInsertIndices.Count > 0)
+                                stringBuilder.Insert(doubleQuoteInsertIndices.Dequeue(), DoubleQuoteCharacter);
+                            stringBuilder.Insert(cellStartCharIndex, DoubleQuoteCharacter);
+                        }
+                        stringBuilder.Append(ch);
+                    }
+                    else if (cellNeedEscape)
+                        stringBuilder.Append(ch);
+                    else
+                    {
+                        //Judge whether it is new line.
+                        bool isNewLine = false;
+                        for (int separatorsIndex = 0; separatorsIndex < NewLineSeparatorsLength; separatorsIndex++)
+                        {
+                            string newLineSeparator = NewLineSeparators[separatorsIndex];
+                            int newLineSeparatorLen = newLineSeparator.Length;
+                            if (ch == newLineSeparator[0] && cellIndex + newLineSeparatorLen <= len)
                             {
-                                cellNeedEscape = true;
-                                stringBuilder.Append(DoubleQuoteCharacter);//Add \" to beginning.
-                            }
-                            stringBuilder.Append(ch);
-                            if (cellNeedEscape)
-                                stringBuilder.Append(ch);// \" change to \"\"
-                            else//Record escape character \" insert index.
-                                doubleQuoteInsertIndices.Enqueue(stringBuilder.Length + doubleQuoteInsertIndices.Count);
-                            break;
-                        case CommaCharacter:
-                            if (!cellNeedEscape)
-                            {
-                                //The cell has comma character, so the preceding \" needs to be changed to \"\" and add \" in the cell's beginning.
-                                cellNeedEscape = true;
-                                while (doubleQuoteInsertIndices.Count > 0)
-                                    stringBuilder.Insert(doubleQuoteInsertIndices.Dequeue(), DoubleQuoteCharacter);
-                                stringBuilder.Insert(cellStartCharIndex, DoubleQuoteCharacter);
-                            }
-                            stringBuilder.Append(ch);
-                            break;
-                        default:
-                            if (cellNeedEscape)
-                                stringBuilder.Append(ch);
-                            else
-                            {
-                                //Judge whether it is new line.
-                                bool isNewLine = false;
-                                for (int separatorsIndex = 0; separatorsIndex < NewLineSeparatorsLength; separatorsIndex++)
+                                isNewLine = true;
+                                for (int separatorIndex = 1; separatorIndex < newLineSeparatorLen; separatorIndex++)
                                 {
-                                    string separator = NewLineSeparators[separatorsIndex];
-                                    int separatorLen = separator.Length;
-                                    if (ch == separator[0] && cellIndex + separatorLen <= len)
-                                    {
-                                        isNewLine = true;
-                                        for (int separatorIndex = 1; separatorIndex < separatorLen; separatorIndex++)
-                                        {
-                                            if (cell[cellIndex + separatorIndex] == separator[separatorIndex]) continue;
-                                            isNewLine = false;
-                                            break;
-                                        }
-                                        if (isNewLine)
-                                        {
-                                            //The cell has new line separator, so the preceding \" needs to be changed to \"\" and add \" in the cell's beginning.
-                                            cellNeedEscape = true;
-                                            while (doubleQuoteInsertIndices.Count > 0)
-                                                stringBuilder.Insert(doubleQuoteInsertIndices.Dequeue(), DoubleQuoteCharacter);
-                                            stringBuilder.Insert(cellStartCharIndex, DoubleQuoteCharacter);
-                                            //Add
-                                            for (int separatorIndex = 0; separatorIndex < separatorLen; separatorIndex++)
-                                                stringBuilder.Append(cell[cellIndex + separatorIndex]);
-                                            //Skip new line string.
-                                            cellIndex += separatorLen - 1;
-                                            break;
-                                        }
-                                    }
+                                    if (cell[cellIndex + separatorIndex] == newLineSeparator[separatorIndex]) continue;
+                                    isNewLine = false;
+                                    break;
                                 }
-                                if(!isNewLine)
-                                    stringBuilder.Append(ch);
+
+                                if (isNewLine)
+                                {
+                                    //The cell has new line separator, so the preceding \" needs to be changed to \"\" and add \" in the cell's beginning.
+                                    cellNeedEscape = true;
+                                    while (doubleQuoteInsertIndices.Count > 0)
+                                        stringBuilder.Insert(doubleQuoteInsertIndices.Dequeue(), DoubleQuoteCharacter);
+                                    stringBuilder.Insert(cellStartCharIndex, DoubleQuoteCharacter);
+                                    //Add
+                                    for (int separatorIndex = 0; separatorIndex < newLineSeparatorLen; separatorIndex++)
+                                        stringBuilder.Append(cell[cellIndex + separatorIndex]);
+                                    //Skip new line string.
+                                    cellIndex += newLineSeparatorLen - 1;
+                                    break;
+                                }
                             }
-                            break;
+                        }
+                        if (!isNewLine)
+                            stringBuilder.Append(ch);
                     }
                 }
                 doubleQuoteInsertIndices.Clear();
                 if(cellNeedEscape)
                     stringBuilder.Append(DoubleQuoteCharacter);//Add \" to the ending.
                 if(cellsIndex != count - 1)
-                    stringBuilder.Append(CommaCharacter);//Not the last cell, then add comma separator. 
+                    stringBuilder.Append(cellSeparator);//Not the last cell, then add cell separator. 
             }
             return stringBuilder.ToString();
         }
