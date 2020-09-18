@@ -43,6 +43,8 @@ namespace TinyCSV
         {
             if (mStringBuilder == null)
                 mStringBuilder = new StringBuilder();
+            else
+                mStringBuilder.Clear();
             for (int i = 0, len = CellArray.Length; i < len; i++)
             {
                 mStringBuilder.Append(CellArray[i]);
@@ -50,7 +52,7 @@ namespace TinyCSV
                     mStringBuilder.Append(cellSeparator);
             }
             string decodeCSV = mStringBuilder.ToString();
-            mStringBuilder.Length = 0;
+            mStringBuilder.Clear();
             return decodeCSV;
         }
         

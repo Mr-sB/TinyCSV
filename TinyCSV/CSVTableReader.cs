@@ -59,6 +59,8 @@ namespace TinyCSV
         {
             if (mStringBuilder == null)
                 mStringBuilder = new StringBuilder();
+            else
+                mStringBuilder.Clear();
             string newLine = newLineStyle.GetNewLine();
             for (int i = 0, len = Headers.Length; i < len; i++)
             {
@@ -83,7 +85,7 @@ namespace TinyCSV
                 mStringBuilder.Append(newLine);
             }
             string decodeTable = mStringBuilder.ToString();
-            mStringBuilder.Length = 0;
+            mStringBuilder.Clear();
             return decodeTable;
         }
         

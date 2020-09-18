@@ -145,6 +145,8 @@ namespace TinyCSV
         {
             if (mStringBuilder == null)
                 mStringBuilder = new StringBuilder();
+            else
+                mStringBuilder.Clear();
             string newLine = newLineStyle.GetNewLine();
             mStringBuilder.Append(Headers.GetCSVEncodeRow(cellSeparator));
             mStringBuilder.Append(newLine);
@@ -156,7 +158,7 @@ namespace TinyCSV
                 mStringBuilder.Append(newLine);
             }
             string encodeCSV = mStringBuilder.ToString();
-            mStringBuilder.Length = 0;
+            mStringBuilder.Clear();
             return encodeCSV;
         }
         
