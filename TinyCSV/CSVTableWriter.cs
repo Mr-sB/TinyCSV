@@ -12,7 +12,7 @@ namespace TinyCSV
         public readonly List<string> Headers;
         public readonly List<string> Descriptions;
         public readonly List<CSVRecordWriter> Records;
-        public readonly char CellSeparator;
+        public char CellSeparator;
         private StringBuilder mStringBuilder;
 
         /// <summary>
@@ -68,26 +68,30 @@ namespace TinyCSV
                 Records.Add(new CSVRecordWriter(records[i]));
         }
 
-        public void AddHeader(string header)
+        public CSVTableWriter AddHeader(string header)
         {
             Headers.Add(header);
+            return this;
         }
 
-        public void AddDescription(string description)
+        public CSVTableWriter AddDescription(string description)
         {
             Descriptions.Add(description);
+            return this;
         }
 
-        public void AddRecord(CSVRecordWriter csvRecordWriter)
+        public CSVTableWriter AddRecord(CSVRecordWriter csvRecordWriter)
         {
             Records.Add(csvRecordWriter);
+            return this;
         }
 
-        public void RemoveHeader(int index)
+        public CSVTableWriter RemoveHeader(int index)
         {
             try
             {
                 Headers.RemoveAt(index);
+                return this;
             }
             catch (Exception e)
             {
@@ -95,11 +99,12 @@ namespace TinyCSV
             }
         }
 
-        public void RemoveDescription(int index)
+        public CSVTableWriter RemoveDescription(int index)
         {
             try
             {
                 Descriptions.RemoveAt(index);
+                return this;
             }
             catch (Exception e)
             {
@@ -107,32 +112,57 @@ namespace TinyCSV
             }
         }
         
-        public void RemoveRecord(int index)
+        public CSVTableWriter RemoveRecord(int index)
         {
             try
             {
                 Records.RemoveAt(index);
+                return this;
             }
             catch (Exception e)
             {
                 throw new CSVException("Index was out of range!", e);
             }
+        }
+
+        /// <summary>
+        /// Get a csv form string.
+        /// </summary>
+        /// <param name="newLineStyle">NewLineStyle.</param>
+        /// <returns>CSV table.</returns>
+        public string GetEncodeTable(NewLineStyle newLineStyle = NewLineStyle.Environment)
+        {
+            return GetEncodeTable(CellSeparator, newLineStyle);
         }
         
         /// <summary>
         /// Get a csv form string.
         /// </summary>
-        public override string ToString()
+        /// <param name="cellSeparator">CSV cells separator.</param>
+        /// <param name="newLineStyle">NewLineStyle.</param>
+        /// <returns></returns>
+        public string GetEncodeTable(char cellSeparator, NewLineStyle newLineStyle = NewLineStyle.Environment)
         {
             if (mStringBuilder == null)
                 mStringBuilder = new StringBuilder();
-            mStringBuilder.AppendLine(Headers.GetCSVEncodeRow(CellSeparator));
-            mStringBuilder.AppendLine(Descriptions.GetCSVEncodeRow(CellSeparator));
+            string newLine = newLineStyle.GetNewLine();
+            mStringBuilder.Append(Headers.GetCSVEncodeRow(cellSeparator));
+            mStringBuilder.Append(newLine);
+            mStringBuilder.Append(Descriptions.GetCSVEncodeRow(cellSeparator));
+            mStringBuilder.Append(newLine);
             foreach (var record in Records)
-                mStringBuilder.AppendLine(record.ToString());
+            {
+                mStringBuilder.Append(record.GetEncodeRow(cellSeparator));
+                mStringBuilder.Append(newLine);
+            }
             string encodeCSV = mStringBuilder.ToString();
             mStringBuilder.Length = 0;
             return encodeCSV;
+        }
+        
+        public override string ToString()
+        {
+            return GetEncodeTable();
         }
     }
 }

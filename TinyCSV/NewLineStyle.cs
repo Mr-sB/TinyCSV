@@ -1,6 +1,6 @@
 namespace TinyCSV
 {
-    public enum CSVNewLineStyle
+    public enum NewLineStyle
     {
         /// <summary>
         /// \r\n for non-Unix platforms, or \n for Unix platforms.

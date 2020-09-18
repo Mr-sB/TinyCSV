@@ -6,7 +6,7 @@ namespace TinyCSV
     public class CSVRecordWriter
     {
         public readonly List<string> Cells;
-        public readonly char CellSeparator;
+        public char CellSeparator;
 
         /// <summary>
         /// Create a empty CSVRecordWriter.
@@ -50,26 +50,38 @@ namespace TinyCSV
         {
         }
 
-        public void AddCell(string cell)
+        public CSVRecordWriter AddCell(string cell)
         {
             Cells.Add(cell);
+            return this;
         }
         
-        public void RemoveCell(int index)
+        public CSVRecordWriter RemoveCell(int index)
         {
             try
             {
                 Cells.RemoveAt(index);
+                return this;
             }
             catch (Exception e)
             {
                 throw new CSVException("Index was out of range!", e);
             }
         }
+
+        public string GetEncodeRow()
+        {
+            return Cells.GetCSVEncodeRow(CellSeparator);
+        }
+        
+        public string GetEncodeRow(char cellSeparator)
+        {
+            return Cells.GetCSVEncodeRow(cellSeparator);
+        }
         
         public override string ToString()
         {
-            return Cells.GetCSVEncodeRow(CellSeparator);
+            return GetEncodeRow();
         }
     }
 }

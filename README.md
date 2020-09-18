@@ -9,13 +9,17 @@ Tiny CSV toolkit for .NET. Easy to read and write CSV table.
 * Easy to read and write csv table.
 * First line is headers.
 * Second line is descriptions.
-* Support choose new line style, `Environment` or `Unix` or `Non-Unix`.
+* Support choose new line style.
+
+|     Environment     | Unix | NonUnix  |
+| :-----------------: | :--: | :------: |
+| Environment.NewLine |  \n  |   \r\n   |
 * Support cell's form:
 
-| commas  | double quotes | custom cells separator | multiline |
-| :-----: | :-----------: | :--------------------: | :-------: |
-|    √    |       √       |           √            |     √     |
-* You can custom separators. Default is comma.
+| contain cells separators | contain double quotes | custom cells separator | multiline |
+| :----------------------: | :-------------------: | :--------------------: | :-------: |
+|             √            |           √           |           √            |     √     |
+* You can custom cells separator. Default is comma.
 * You can choose whether to support multiline cells. Default is support.
 
 ## Usage
@@ -23,24 +27,22 @@ More examples can be found in the TinyCSV.Example.
 ### Reading a CSV file
 ```c#
 var csv = File.ReadAllText("sample.csv");
-//Create csv reader form csv content.
-CSVTableReader csvTableReader = new CSVTableReader(csv);
+//Create csv reader form csv content, custom cell separator.
+CSVTableReader csvTableReader = new CSVTableReader(csv, ',');
 ```
 ### Writing a CSV file
 ```c#
 //Create a empty csv writer.
-CSVTableWriter csvTableWriter = new CSVTableWriter();
-//Add headers.
-csvTableWriter.AddHeader("Data1");
-//Add descriptions.
-csvTableWriter.AddDescription("string");
-//Add records.
-var record1 = new CSVRecordWriter();
-record1.AddCell("string with double quote\" and comma, and \n\\n and \r\n\\r\\n");
-csvTableWriter.AddRecord(record1);
-//Get csv form string.
-string csv = csvTableWriter.ToString();
-
+CSVTableWriter csvTableWriter = new CSVTableWriter()
+    //Add headers.
+    .AddHeader("Data1")
+    //Add descriptions.
+    .AddDescription("string")
+    //Add records.
+    .AddRecord(new CSVRecordWriter()
+        .AddCell("string with double quote\" and comma, and \n\\n and \r\n\\r\\n"));
+//Get csv form string, custom cell separator and choose new line style.
+string csv = csvTableWriter.GetEncodeTable(',', NewLineStyle.NonUnix);
 //Create csv writer from csv content.
 CSVTableWriter csvTableWriter2 = new CSVTableWriter(csv);
 ```

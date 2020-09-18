@@ -9,7 +9,7 @@ namespace TinyCSV
         public readonly Dictionary<string, string> CellDict;
         public readonly string[] CellArray;
         public readonly string RawRecord;
-        public readonly char CellSeparator;
+        public char CellSeparator;
         private StringBuilder mStringBuilder;
 
         /// <summary>
@@ -34,7 +34,12 @@ namespace TinyCSV
             }
         }
 
-        public override string ToString()
+        public string GetDecodeRow()
+        {
+            return GetDecodeRow(CellSeparator);
+        }
+        
+        public string GetDecodeRow(char cellSeparator)
         {
             if (mStringBuilder == null)
                 mStringBuilder = new StringBuilder();
@@ -42,11 +47,16 @@ namespace TinyCSV
             {
                 mStringBuilder.Append(CellArray[i]);
                 if(i < len - 1)
-                    mStringBuilder.Append(CellSeparator);
+                    mStringBuilder.Append(cellSeparator);
             }
             string decodeCSV = mStringBuilder.ToString();
             mStringBuilder.Length = 0;
             return decodeCSV;
+        }
+        
+        public override string ToString()
+        {
+            return GetDecodeRow();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace TinyCSV
         public readonly CSVRecordReader[] Records;
         public readonly int Column;
         public readonly int RecordRow;
-        public readonly char CellSeparator;
+        public char CellSeparator;
         private StringBuilder mStringBuilder;
 
         /// <summary>
@@ -44,31 +44,52 @@ namespace TinyCSV
             RecordRow = Records.Length;
         }
 
-        public override string ToString()
+        /// <summary>
+        /// Get decode csv string.
+        /// </summary>
+        public string GetDecodeTable(NewLineStyle newLineStyle = NewLineStyle.Environment)
+        {
+            return GetDecodeTable(CellSeparator, newLineStyle);
+        }
+
+        /// <summary>
+        /// Get decode csv string.
+        /// </summary>
+        public string GetDecodeTable(char cellSeparator, NewLineStyle newLineStyle = NewLineStyle.Environment)
         {
             if (mStringBuilder == null)
                 mStringBuilder = new StringBuilder();
+            string newLine = newLineStyle.GetNewLine();
             for (int i = 0, len = Headers.Length; i < len; i++)
             {
                 mStringBuilder.Append(Headers[i]);
                 if(i < len - 1)
-                    mStringBuilder.Append(CellSeparator);
+                    mStringBuilder.Append(cellSeparator);
                 else
-                    mStringBuilder.Append(Environment.NewLine);
+                    mStringBuilder.Append(newLine);
             }
             for (int i = 0, len = Descriptions.Length; i < len; i++)
             {
                 mStringBuilder.Append(Descriptions[i]);
                 if(i < len - 1)
-                    mStringBuilder.Append(CellSeparator);
+                    mStringBuilder.Append(cellSeparator);
                 else
-                    mStringBuilder.Append(Environment.NewLine);
+                    mStringBuilder.Append(newLine);
             }
+
             foreach (var record in Records)
-                mStringBuilder.AppendLine(record.ToString());
-            string decodeCSV = mStringBuilder.ToString();
+            {
+                mStringBuilder.Append(record.GetDecodeRow(cellSeparator));
+                mStringBuilder.Append(newLine);
+            }
+            string decodeTable = mStringBuilder.ToString();
             mStringBuilder.Length = 0;
-            return decodeCSV;
+            return decodeTable;
+        }
+        
+        public override string ToString()
+        {
+            return GetDecodeTable();
         }
     }
 }

@@ -8,7 +8,8 @@ namespace TinyCSV
     {
         public const char DoubleQuoteCharacter = '\"';
         public const char CommaCharacter = ',';
-        public static readonly string[] NewLineSeparators = {"\n", "\r\n"};
+        
+        public static readonly string[] NewLineSeparators = {NewLineHelper.UnixNewLine, NewLineHelper.NonUnixNewLine};
         public static readonly int NewLineSeparatorsLength = NewLineSeparators.Length;
         public static readonly string[] EmptyStringArray = new string[0];
         

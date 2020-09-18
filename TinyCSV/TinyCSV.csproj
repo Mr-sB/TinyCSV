@@ -37,7 +37,8 @@
     <ItemGroup>
         <Compile Include="CSVDataHelper.cs" />
         <Compile Include="CSVException.cs" />
-        <Compile Include="CSVNewLineStyle.cs" />
+        <Compile Include="NewLineHelper.cs" />
+        <Compile Include="NewLineStyle.cs" />
         <Compile Include="CSVRecordReader.cs" />
         <Compile Include="CSVRecordWriter.cs" />
         <Compile Include="CSVTableReader.cs" />
