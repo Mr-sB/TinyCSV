@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use `string.Split` to replace `CSVDataHelper.StringSplit`.
 - Rename `CSVDataHelper.GetCSVRows` to `CSVDataHelper.GetCSVRowList`.
 - Writers' Add and Remove methods will return themselves.
+- `CSVTableWriter.AddRecord` method will set `CSVRecordWriter.CellSeparator`.
 
 ### Security
 - Change `CSVDataHelper.NewLineSeparators` and `CSVDataHelper.NewLineSeparatorsLength` to readonly.

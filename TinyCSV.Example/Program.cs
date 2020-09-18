@@ -60,16 +60,15 @@ namespace TinyCSV.Example
             
             //Write
             //Create csv writer from csv reader, custom cell separator.
-            char cellSeparator = ';';
-            CSVTableWriter csvTableWriter2 = new CSVTableWriter(csvTableReader, cellSeparator)
+            CSVTableWriter csvTableWriter2 = new CSVTableWriter(csvTableReader, ';')
                 //Remove some row and column.
                 .RemoveHeader(5)
                 .RemoveDescription(5)
                 .RemoveRecord(0);
             foreach (var record in csvTableWriter2.Records)
                 record.RemoveCell(5);
-            //Add new record.
-            csvTableWriter2.AddRecord(new CSVRecordWriter(cellSeparator)
+            //Add new record. AddRecord method will set CSVRecordWriter.CellSeparator.
+            csvTableWriter2.AddRecord(new CSVRecordWriter()
                 .AddCell("100")
                 .AddCell("#cccccc")
                 .AddCell("5")

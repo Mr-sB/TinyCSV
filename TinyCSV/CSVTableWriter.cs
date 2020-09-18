@@ -83,6 +83,8 @@ namespace TinyCSV
         public CSVTableWriter AddRecord(CSVRecordWriter csvRecordWriter)
         {
             Records.Add(csvRecordWriter);
+            //Assign this.CellSeparator to CSVRecordWriter.CellSeparator.
+            csvRecordWriter.CellSeparator = CellSeparator;
             return this;
         }
 
