@@ -1,6 +1,6 @@
 # TinyCSV
 <p align="left">
-  <a href="https://github.com/Mr-sB/TinyCSV/releases"><img src="https://img.shields.io/badge/version-1.1.0-blue" alt="Version 1.1.0"></a>
+  <a href="https://github.com/Mr-sB/TinyCSV/releases"><img src="https://img.shields.io/badge/version-1.2.0-blue" alt="Version 1.2.0"></a>
 </p>
 
 Tiny CSV toolkit for .NET. Easy to read and write CSV table.
