@@ -23,21 +23,22 @@ namespace TinyCSV
         /// <param name="svContent">CSV content.</param>
         /// <param name="cellSeparator">CSV cells separator.</param>
         /// <param name="supportCellMultiline">If true, support multiline cells but slower, otherwise not support multiline cells but faster.</param>
-        public CSVTableReader(string svContent, char cellSeparator = CSVDataHelper.CommaCharacter, bool supportCellMultiline = true)
+        /// <param name="readRecords">Whether read all records.</param>
+        public CSVTableReader(string svContent, char cellSeparator = CSVDataHelper.CommaCharacter, bool supportCellMultiline = true, bool readRecords = true)
         {
             RawCSVContent = svContent;
             CellSeparator = cellSeparator;
-            string[] rows = RawCSVContent.GetCSVRowArray(cellSeparator, supportCellMultiline);
-            int recordLen = rows.Length;
-            Headers = recordLen > 0 ? rows[0].GetCSVDecodeRow(cellSeparator).ToArray() : new string[0];
+            string[] rows = RawCSVContent.GetCSVRowArray(cellSeparator, supportCellMultiline, readRecords ? -1 : CSVDataHelper.HeaderInfoRowCount);
+            int rowsLength = rows.Length;
+            Headers = rowsLength > 0 ? rows[0].GetCSVDecodeRow(cellSeparator).ToArray() : new string[0];
             Column = Headers.Length;
-            Descriptions = recordLen > 1 ? rows[1].GetCSVDecodeRow(cellSeparator, Column).ToArray() : new string[0];
-            if (recordLen > 2)
+            Descriptions = rowsLength > 1 ? rows[1].GetCSVDecodeRow(cellSeparator, Column).ToArray() : new string[0];
+            if (rowsLength > CSVDataHelper.HeaderInfoRowCount && readRecords)
             {
                 //Remove the first and second lines.
-                Records = new CSVRecordReader[recordLen - 2];
-                for (int i = 2; i < recordLen; i++)
-                    Records[i - 2] = new CSVRecordReader(Headers, rows[i], cellSeparator);
+                Records = new CSVRecordReader[rowsLength - CSVDataHelper.HeaderInfoRowCount];
+                for (int i = CSVDataHelper.HeaderInfoRowCount; i < rowsLength; i++)
+                    Records[i - CSVDataHelper.HeaderInfoRowCount] = new CSVRecordReader(Headers, rows[i], cellSeparator);
             }
             else
                 Records = new CSVRecordReader[0];

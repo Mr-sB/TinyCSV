@@ -6,6 +6,7 @@ namespace TinyCSV
 {
     public static class CSVDataHelper
     {
+        public const int HeaderInfoRowCount = 2;
         public const char DoubleQuoteCharacter = '\"';
         public const char CommaCharacter = ',';
         
@@ -19,14 +20,17 @@ namespace TinyCSV
         /// <param name="csvContent">CSV content.</param>
         /// <param name="cellSeparator">CSV cells separator.</param>
         /// <param name="supportCellMultiline">If true, support multiline cell but slower, otherwise not support multiline cell but faster.</param>
+        /// <param name="rowCount">Get how many rows. Negative means all rows.</param>
         /// <returns>CSV rows.</returns>
-        public static string[] GetCSVRowArray(this string csvContent, char cellSeparator = CommaCharacter, bool supportCellMultiline = true)
+        public static string[] GetCSVRowArray(this string csvContent, char cellSeparator = CommaCharacter, bool supportCellMultiline = true, int rowCount = -1)
         {
-            if (string.IsNullOrEmpty(csvContent)) return EmptyStringArray;
+            if (string.IsNullOrEmpty(csvContent) || rowCount == 0) return EmptyStringArray;
             //Split by \n or \r\n.
             if (!supportCellMultiline)
-                return csvContent.Split(NewLineSeparators, StringSplitOptions.RemoveEmptyEntries);
-            return csvContent.GetCSVRowList(cellSeparator, true).ToArray();
+                return rowCount > 0
+                    ? csvContent.Split(NewLineSeparators, rowCount, StringSplitOptions.RemoveEmptyEntries)
+                    : csvContent.Split(NewLineSeparators, StringSplitOptions.RemoveEmptyEntries);
+            return csvContent.GetCSVRowList(cellSeparator, true, rowCount).ToArray();
         }
         
         /// <summary>
@@ -35,15 +39,18 @@ namespace TinyCSV
         /// <param name="csvContent">CSV content.</param>
         /// <param name="cellSeparator">CSV cells separator.</param>
         /// <param name="supportCellMultiline">If true, support multiline cell but slower, otherwise not support multiline cell but faster.</param>
+        /// <param name="rowCount">Get how many rows. Negative means all rows.</param>
         /// <returns>CSV rows.</returns>
-        public static List<string> GetCSVRowList(this string csvContent, char cellSeparator = CommaCharacter, bool supportCellMultiline = true)
+        public static List<string> GetCSVRowList(this string csvContent, char cellSeparator = CommaCharacter, bool supportCellMultiline = true, int rowCount = -1)
         {
-            if (string.IsNullOrEmpty(csvContent)) return new List<string>();
+            if (string.IsNullOrEmpty(csvContent) || rowCount == 0) return new List<string>();
             //Split by \n or \r\n.
             if (!supportCellMultiline)
-                return new List<string>(csvContent.Split(NewLineSeparators, StringSplitOptions.RemoveEmptyEntries));
-            
-            List<string> rows = new List<string>();
+                return new List<string>(rowCount > 0
+                    ? csvContent.Split(NewLineSeparators, rowCount, StringSplitOptions.RemoveEmptyEntries)
+                    : csvContent.Split(NewLineSeparators, StringSplitOptions.RemoveEmptyEntries));
+
+            var rows = rowCount < 0 ? new List<string>() : new List<string>(rowCount);
 
             StringBuilder stringBuilder = new StringBuilder();
             bool isCellBeginning = true;
@@ -98,7 +105,11 @@ namespace TinyCSV
                             {
                                 //Skip empty row.
                                 if (stringBuilder.Length != 0)
+                                {
                                     rows.Add(stringBuilder.ToString());
+                                    if (rowCount > 0 && rows.Count >= rowCount)
+                                        return rows;
+                                }
                                 stringBuilder.Clear();
                                 //Skip new line string.
                                 csvIndex += newLineSeparatorLen - 1;
@@ -116,7 +127,7 @@ namespace TinyCSV
             }
             //The last line maybe does not have new line separator.
             //Skip empty row.
-            if(stringBuilder.Length != 0)
+            if (stringBuilder.Length != 0)
                 rows.Add(stringBuilder.ToString());
             stringBuilder.Clear();
             return rows;

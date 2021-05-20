@@ -33,18 +33,19 @@ namespace TinyCSV
         /// <param name="svContent">CSV content.</param>
         /// <param name="cellSeparator">CSV cells separator.</param>
         /// <param name="supportCellMultiline">If true, support multiline cells but slower, otherwise not support multiline cells but faster.</param>
-        public CSVTableWriter(string svContent, char cellSeparator = CSVDataHelper.CommaCharacter, bool supportCellMultiline = true)
+        /// <param name="readRecords">Whether read all records.</param>
+        public CSVTableWriter(string svContent, char cellSeparator = CSVDataHelper.CommaCharacter, bool supportCellMultiline = true, bool readRecords = true)
         {
-            string[] rows = svContent.GetCSVRowArray(cellSeparator, supportCellMultiline);
+            string[] rows = svContent.GetCSVRowArray(cellSeparator, supportCellMultiline, readRecords ? -1 : CSVDataHelper.HeaderInfoRowCount);
             CellSeparator = cellSeparator;
-            int recordLen = rows.Length;
-            Headers = recordLen > 0 ? rows[0].GetCSVDecodeRow(cellSeparator) : new List<string>();
-            Descriptions = recordLen > 1 ? rows[1].GetCSVDecodeRow(cellSeparator, Headers.Count) : new List<string>();
-            if (recordLen > 2)
+            int rowsLength = rows.Length;
+            Headers = rowsLength > 0 ? rows[0].GetCSVDecodeRow(cellSeparator) : new List<string>();
+            Descriptions = rowsLength > 1 ? rows[1].GetCSVDecodeRow(cellSeparator, Headers.Count) : new List<string>();
+            if (rowsLength > CSVDataHelper.HeaderInfoRowCount && readRecords)
             {
-                //Remove the first and second lines.
-                Records = new List<CSVRecordWriter>(recordLen - 2);
-                for (int i = 2; i < recordLen; i++)
+                //Remove header info rows.
+                Records = new List<CSVRecordWriter>(rowsLength - CSVDataHelper.HeaderInfoRowCount);
+                for (int i = CSVDataHelper.HeaderInfoRowCount; i < rowsLength; i++)
                     Records.Add(new CSVRecordWriter(rows[i], cellSeparator, Headers.Count));
             }
             else
@@ -56,16 +57,22 @@ namespace TinyCSV
         /// </summary>
         /// <param name="csvTableReader">CSVTableReader.</param>
         /// <param name="cellSeparator">CSV cells separator.</param>
-        public CSVTableWriter(CSVTableReader csvTableReader, char cellSeparator = CSVDataHelper.CommaCharacter)
+        /// <param name="readRecords">Whether read all records.</param>
+        public CSVTableWriter(CSVTableReader csvTableReader, char cellSeparator = CSVDataHelper.CommaCharacter, bool readRecords = true)
         {
             CellSeparator = cellSeparator;
             Headers = new List<string>(csvTableReader.Headers);
             Descriptions = new List<string>(csvTableReader.Descriptions);
-            var records = csvTableReader.Records;
-            int recordCount = records.Length;
-            Records = new List<CSVRecordWriter>(recordCount);
-            for (int i = 0; i < recordCount; i++)
-                Records.Add(new CSVRecordWriter(records[i]));
+            if (readRecords)
+            {
+                var records = csvTableReader.Records;
+                int recordCount = records.Length;
+                Records = new List<CSVRecordWriter>(recordCount);
+                for (int i = 0; i < recordCount; i++)
+                    Records.Add(new CSVRecordWriter(records[i]));
+            }
+            else
+                Records = new List<CSVRecordWriter>();
         }
 
         public CSVTableWriter AddHeader(string header)
