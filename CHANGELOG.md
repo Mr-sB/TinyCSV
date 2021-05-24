@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- `CSVTableReader` and `CSVTableWriter` constructors add `readRecords` parameter.
+- `CSVTableReader` and `CSVTableWriter` constructors add `readRecordCount` parameter.
 - `CSVDataHelper.GetCSVRowArray` and `CSVDataHelper.GetCSVRowList` add `rowCount` parameter.
 - `CSVDataHelper` add `HeaderInfoRowCount` constant.
 

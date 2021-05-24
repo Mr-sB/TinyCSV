@@ -23,17 +23,17 @@ namespace TinyCSV
         /// <param name="svContent">CSV content.</param>
         /// <param name="cellSeparator">CSV cells separator.</param>
         /// <param name="supportCellMultiline">If true, support multiline cells but slower, otherwise not support multiline cells but faster.</param>
-        /// <param name="readRecords">Whether read all records.</param>
-        public CSVTableReader(string svContent, char cellSeparator = CSVDataHelper.CommaCharacter, bool supportCellMultiline = true, bool readRecords = true)
+        /// <param name="readRecordCount">Read how many record rows. Negative means all records.</param>
+        public CSVTableReader(string svContent, char cellSeparator = CSVDataHelper.CommaCharacter, bool supportCellMultiline = true, int readRecordCount = -1)
         {
             RawCSVContent = svContent;
             CellSeparator = cellSeparator;
-            string[] rows = RawCSVContent.GetCSVRowArray(cellSeparator, supportCellMultiline, readRecords ? -1 : CSVDataHelper.HeaderInfoRowCount);
+            string[] rows = RawCSVContent.GetCSVRowArray(cellSeparator, supportCellMultiline, readRecordCount >= 0 ? readRecordCount + CSVDataHelper.HeaderInfoRowCount : readRecordCount);
             int rowsLength = rows.Length;
             Headers = rowsLength > 0 ? rows[0].GetCSVDecodeRow(cellSeparator).ToArray() : new string[0];
             Column = Headers.Length;
             Descriptions = rowsLength > 1 ? rows[1].GetCSVDecodeRow(cellSeparator, Column).ToArray() : new string[0];
-            if (rowsLength > CSVDataHelper.HeaderInfoRowCount && readRecords)
+            if (rowsLength > CSVDataHelper.HeaderInfoRowCount)
             {
                 //Remove the first and second lines.
                 Records = new CSVRecordReader[rowsLength - CSVDataHelper.HeaderInfoRowCount];

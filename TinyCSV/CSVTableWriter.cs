@@ -33,15 +33,15 @@ namespace TinyCSV
         /// <param name="svContent">CSV content.</param>
         /// <param name="cellSeparator">CSV cells separator.</param>
         /// <param name="supportCellMultiline">If true, support multiline cells but slower, otherwise not support multiline cells but faster.</param>
-        /// <param name="readRecords">Whether read all records.</param>
-        public CSVTableWriter(string svContent, char cellSeparator = CSVDataHelper.CommaCharacter, bool supportCellMultiline = true, bool readRecords = true)
+        /// <param name="readRecordCount">Read how many record rows. Negative means all records.</param>
+        public CSVTableWriter(string svContent, char cellSeparator = CSVDataHelper.CommaCharacter, bool supportCellMultiline = true, int readRecordCount = -1)
         {
-            string[] rows = svContent.GetCSVRowArray(cellSeparator, supportCellMultiline, readRecords ? -1 : CSVDataHelper.HeaderInfoRowCount);
+            string[] rows = svContent.GetCSVRowArray(cellSeparator, supportCellMultiline, readRecordCount >= 0 ? readRecordCount + CSVDataHelper.HeaderInfoRowCount : readRecordCount);
             CellSeparator = cellSeparator;
             int rowsLength = rows.Length;
             Headers = rowsLength > 0 ? rows[0].GetCSVDecodeRow(cellSeparator) : new List<string>();
             Descriptions = rowsLength > 1 ? rows[1].GetCSVDecodeRow(cellSeparator, Headers.Count) : new List<string>();
-            if (rowsLength > CSVDataHelper.HeaderInfoRowCount && readRecords)
+            if (rowsLength > CSVDataHelper.HeaderInfoRowCount)
             {
                 //Remove header info rows.
                 Records = new List<CSVRecordWriter>(rowsLength - CSVDataHelper.HeaderInfoRowCount);
@@ -57,22 +57,23 @@ namespace TinyCSV
         /// </summary>
         /// <param name="csvTableReader">CSVTableReader.</param>
         /// <param name="cellSeparator">CSV cells separator.</param>
-        /// <param name="readRecords">Whether read all records.</param>
-        public CSVTableWriter(CSVTableReader csvTableReader, char cellSeparator = CSVDataHelper.CommaCharacter, bool readRecords = true)
+        /// <param name="readRecordCount">Read how many record rows. Negative means all records.</param>
+        public CSVTableWriter(CSVTableReader csvTableReader, char cellSeparator = CSVDataHelper.CommaCharacter, int readRecordCount = -1)
         {
             CellSeparator = cellSeparator;
             Headers = new List<string>(csvTableReader.Headers);
             Descriptions = new List<string>(csvTableReader.Descriptions);
-            if (readRecords)
+            if (readRecordCount == 0)
+                Records = new List<CSVRecordWriter>();
+            else
             {
                 var records = csvTableReader.Records;
-                int recordCount = records.Length;
-                Records = new List<CSVRecordWriter>(recordCount);
-                for (int i = 0; i < recordCount; i++)
+                var recordCount = records.Length;
+                var count = readRecordCount > 0 ? Math.Min(recordCount, readRecordCount) : recordCount;
+                Records = new List<CSVRecordWriter>(count);
+                for (int i = 0; i < count; i++)
                     Records.Add(new CSVRecordWriter(records[i]));
             }
-            else
-                Records = new List<CSVRecordWriter>();
         }
 
         public CSVTableWriter AddHeader(string header)
