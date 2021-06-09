@@ -203,7 +203,7 @@ namespace TinyCSV
                 var cell = cellList[cellsIndex];
                 bool cellNeedEscape = false;
                 int cellStartCharIndex = stringBuilder.Length;
-                for (int cellIndex = 0, len = cell.Length; cellIndex < len; cellIndex++)
+                for (int cellIndex = 0, len = cell != null ? cell.Length : 0; cellIndex < len; cellIndex++)
                 {
                     char ch = cell[cellIndex];
                     if (ch == DoubleQuoteCharacter)
