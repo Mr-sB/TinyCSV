@@ -65,7 +65,7 @@ namespace TinyCSV
             }
             catch (Exception e)
             {
-                throw new CSVException("Index was out of range!", e);
+                throw new CSVException(e);
             }
         }
 

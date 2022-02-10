@@ -1,37 +1,23 @@
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace TinyCSV
 {
     public class CSVRecordReader
     {
-        public readonly Dictionary<string, string> CellDict;
         public readonly string[] CellArray;
-        public readonly string RawRecord;
         public char CellSeparator;
         private StringBuilder mStringBuilder;
 
         /// <summary>
         /// Create a CSVRecordReader.
         /// </summary>
-        /// <param name="headers">Headres</param>
         /// <param name="record">CSV row data.</param>
         /// <param name="cellSeparator">CSV cells separator.</param>
-        public CSVRecordReader(string[] headers, string record, char cellSeparator = CSVDataHelper.CommaCharacter)
+        /// <param name="capacity">List capacity.</param>
+        public CSVRecordReader(string record, char cellSeparator = CSVDataHelper.CommaCharacter, int capacity = 0)
         {
-            RawRecord = record;
             CellSeparator = cellSeparator;
-            int column = headers.Length;
-            CellDict = new Dictionary<string, string>(column);
-            CellArray = RawRecord.GetCSVDecodeRow(cellSeparator, column).ToArray();
-            for (int i = 0, cellLen = CellArray.Length; i < column; i++)
-            {
-                if(!CellDict.ContainsKey(headers[i]))
-                    CellDict.Add(headers[i], i < cellLen ? CellArray[i] : string.Empty);
-                else
-                    Console.WriteLine("Has same header: " + headers[i]);
-            }
+            CellArray = record.GetCSVDecodeRow(cellSeparator, capacity).ToArray();
         }
 
         public string GetDecodeRow()

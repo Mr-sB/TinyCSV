@@ -28,25 +28,25 @@ More examples can be found in the TinyCSV.Example.
 ```c#
 var csv = File.ReadAllText("sample.csv");
 //Create csv reader form csv content, custom cell separator.
-CSVTableReader csvTableReader = new CSVTableReader(csv, ',');
+CSVTableReader csvTableReader = new CSVTableReader(csv, 2, ',');
 ```
 ### Writing a CSV file
 ```c#
 //Create a empty csv writer.
 CSVTableWriter csvTableWriter = new CSVTableWriter()
     //Add headers.
-    .AddHeader("Data1")
-    //Add descriptions.
-    .AddDescription("string")
+    .AddHeader(new List<string>{"Data1", "Data2"})
+    .AddHeader(new List<string>{"string", "int"})
     //Add records.
     .AddRecord(new CSVRecordWriter()
-        .AddCell("string with double quote\" and comma, and \n\\n and \r\n\\r\\n"));
+        .AddCell("string with double quote\" and comma, and \n\\n and \r\n\\r\\n")
+        .AddCell("1"));
 //Get csv form string, custom cell separator and choose new line style.
 string csv = csvTableWriter.GetEncodeTable(',', NewLineStyle.NonUnix);
 //Create csv writer from csv content.
-CSVTableWriter csvTableWriter2 = new CSVTableWriter(csv);
+CSVTableWriter csvTableWriter2 = new CSVTableWriter(csv, 2);
 ```
 
 ## Requirements
 TinyCSV currently targets and supports
-* .NET Framework 3.5 and above.
+* .NET Framework 4.0 and above.

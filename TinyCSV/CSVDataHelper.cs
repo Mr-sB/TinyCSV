@@ -6,7 +6,6 @@ namespace TinyCSV
 {
     public static class CSVDataHelper
     {
-        public const int HeaderInfoRowCount = 2;
         public const char DoubleQuoteCharacter = '\"';
         public const char CommaCharacter = ',';
         
@@ -289,7 +288,7 @@ namespace TinyCSV
             }
             catch (Exception e)
             {
-                throw new CSVException(e.Message, e);
+                throw new CSVException(e);
             }
         }
         

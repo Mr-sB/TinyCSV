@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace TinyCSV.Example
@@ -11,19 +12,8 @@ namespace TinyCSV.Example
             //Create a empty csv writer.
             CSVTableWriter csvTableWriter = new CSVTableWriter()
                 //Add headers.
-                .AddHeader("Data1")
-                .AddHeader("Data2")
-                .AddHeader("Data3")
-                .AddHeader("Data4")
-                .AddHeader("Data5")
-                .AddHeader("Data6")
-                //Add descriptions.
-                .AddDescription("int")
-                .AddDescription("Color")
-                .AddDescription("int")
-                .AddDescription("string")
-                .AddDescription("string")
-                .AddDescription("int[]")
+                .AddHeader(new List<string>{"Data1", "Data2", "Data3", "Data4", "Data5", "Data6"})
+                .AddHeader(new List<string>{"int", "Color", "int", "string", "string", "int[]"})
                 //Add records.
                 .AddRecord(new CSVRecordWriter()
                     .AddCell("1")
@@ -55,16 +45,16 @@ namespace TinyCSV.Example
             
             //Read
             //Create csv reader form csv content.
-            CSVTableReader csvTableReader = new CSVTableReader(csv1);
+            CSVTableReader csvTableReader = new CSVTableReader(csv1, 2);
             Console.WriteLine("Read from csv form:\n" + csvTableReader);
             
             //Write
             //Create csv writer from csv reader, custom cell separator.
-            CSVTableWriter csvTableWriter2 = new CSVTableWriter(csvTableReader, ';')
-                //Remove some row and column.
-                .RemoveHeader(5)
-                .RemoveDescription(5)
-                .RemoveRecord(0);
+            CSVTableWriter csvTableWriter2 = new CSVTableWriter(csvTableReader, ';');
+            //Remove some row and column.
+            csvTableWriter2.RemoveRecord(0);
+            foreach (var header in csvTableWriter2.Headers)
+                header.RemoveAt(5);
             foreach (var record in csvTableWriter2.Records)
                 record.RemoveCell(5);
             //Add new record. AddRecord method will set CSVRecordWriter.CellSeparator.

@@ -5,10 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.3.0] - 2022-02-10
 ### Added
-- `CSVTableReader` and `CSVTableWriter` constructors add `readRecordCount` parameter.
+- `CSVTableReader` and `CSVTableWriter` constructors add `headerRow` and `readRecordCount` parameters.
 - `CSVDataHelper.GetCSVRowArray` and `CSVDataHelper.GetCSVRowList` add `rowCount` parameter.
-- `CSVDataHelper` add `HeaderInfoRowCount` constant.
+
+### Changed
+- `Headers` change from one dimension to two dimensions.
+
+### Removed
+- Table `Descriptions`.
 
 ## [1.2.0] - 2020-09-18
 ### Added

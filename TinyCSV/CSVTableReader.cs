@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 
 namespace TinyCSV
@@ -8,11 +7,9 @@ namespace TinyCSV
     /// </summary>
     public class CSVTableReader
     {
-        public readonly string RawCSVContent;
-        public readonly string[] Headers;
-        public readonly string[] Descriptions;
+        public readonly string[][] Headers;
+        public readonly int HeaderRow;
         public readonly CSVRecordReader[] Records;
-        public readonly int Column;
         public readonly int RecordRow;
         public char CellSeparator;
         private StringBuilder mStringBuilder;
@@ -21,24 +18,25 @@ namespace TinyCSV
         /// Create a CSVTableReader by csv content.
         /// </summary>
         /// <param name="svContent">CSV content.</param>
+        /// <param name="headerRow">Header Row.</param>
         /// <param name="cellSeparator">CSV cells separator.</param>
         /// <param name="supportCellMultiline">If true, support multiline cells but slower, otherwise not support multiline cells but faster.</param>
         /// <param name="readRecordCount">Read how many record rows. Negative means all records.</param>
-        public CSVTableReader(string svContent, char cellSeparator = CSVDataHelper.CommaCharacter, bool supportCellMultiline = true, int readRecordCount = -1)
+        public CSVTableReader(string svContent, int headerRow, char cellSeparator = CSVDataHelper.CommaCharacter, bool supportCellMultiline = true, int readRecordCount = -1)
         {
-            RawCSVContent = svContent;
+            HeaderRow = headerRow;
             CellSeparator = cellSeparator;
-            string[] rows = RawCSVContent.GetCSVRowArray(cellSeparator, supportCellMultiline, readRecordCount >= 0 ? readRecordCount + CSVDataHelper.HeaderInfoRowCount : readRecordCount);
+            string[] rows = svContent.GetCSVRowArray(cellSeparator, supportCellMultiline, readRecordCount >= 0 ? readRecordCount + headerRow : readRecordCount);
             int rowsLength = rows.Length;
-            Headers = rowsLength > 0 ? rows[0].GetCSVDecodeRow(cellSeparator).ToArray() : new string[0];
-            Column = Headers.Length;
-            Descriptions = rowsLength > 1 ? rows[1].GetCSVDecodeRow(cellSeparator, Column).ToArray() : new string[0];
-            if (rowsLength > CSVDataHelper.HeaderInfoRowCount)
+            Headers = new string[headerRow][];
+            for (int i = 0; i < headerRow; i++)
+                Headers[i] = i < rowsLength ? rows[i].GetCSVDecodeRow(cellSeparator).ToArray() : CSVDataHelper.EmptyStringArray;
+            if (rowsLength > headerRow)
             {
-                //Remove the first and second lines.
-                Records = new CSVRecordReader[rowsLength - CSVDataHelper.HeaderInfoRowCount];
-                for (int i = CSVDataHelper.HeaderInfoRowCount; i < rowsLength; i++)
-                    Records[i - CSVDataHelper.HeaderInfoRowCount] = new CSVRecordReader(Headers, rows[i], cellSeparator);
+                //Remove headers
+                Records = new CSVRecordReader[rowsLength - headerRow];
+                for (int i = headerRow; i < rowsLength; i++)
+                    Records[i - headerRow] = new CSVRecordReader(rows[i], cellSeparator, Headers[0].Length);
             }
             else
                 Records = new CSVRecordReader[0];
@@ -63,21 +61,16 @@ namespace TinyCSV
             else
                 mStringBuilder.Clear();
             string newLine = newLineStyle.GetNewLine();
-            for (int i = 0, len = Headers.Length; i < len; i++)
+            foreach (var header in Headers)
             {
-                mStringBuilder.Append(Headers[i]);
-                if(i < len - 1)
-                    mStringBuilder.Append(cellSeparator);
-                else
-                    mStringBuilder.Append(newLine);
-            }
-            for (int i = 0, len = Descriptions.Length; i < len; i++)
-            {
-                mStringBuilder.Append(Descriptions[i]);
-                if(i < len - 1)
-                    mStringBuilder.Append(cellSeparator);
-                else
-                    mStringBuilder.Append(newLine);
+                for (int i = 0, len = header.Length; i < len; i++)
+                {
+                    mStringBuilder.Append(header[i]);
+                    if (i < len - 1)
+                        mStringBuilder.Append(cellSeparator);
+                    else
+                        mStringBuilder.Append(newLine);
+                }
             }
 
             foreach (var record in Records)

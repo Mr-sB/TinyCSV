@@ -9,7 +9,7 @@
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>TinyCSV.Example</RootNamespace>
         <AssemblyName>TinyCSV.Example</AssemblyName>
-        <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+        <TargetFramework>net40</TargetFramework>
         <FileAlignment>512</FileAlignment>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -39,10 +39,7 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\TinyCSV\TinyCSV.csproj">
-        <Project>{9ce1ba8a-ec85-435f-9936-771bbed2b92e}</Project>
-        <Name>TinyCSV</Name>
-      </ProjectReference>
+      <ProjectReference Include="..\TinyCSV\TinyCSV.csproj" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

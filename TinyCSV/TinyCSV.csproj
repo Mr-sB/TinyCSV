@@ -9,15 +9,19 @@
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>TinyCSV</RootNamespace>
         <AssemblyName>TinyCSV</AssemblyName>
-        <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+        <TargetFrameworks>net45;net40;netstandard1.1;netstandard2.0</TargetFrameworks>
         <FileAlignment>512</FileAlignment>
+        <PackageProjectUrl>https://github.com/Mr-sB/TinyCSV</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/Mr-sB/TinyCSV/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/Mr-sB/TinyCSV.git</RepositoryUrl>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
         <DebugSymbols>true</DebugSymbols>
         <DebugType>full</DebugType>
         <Optimize>false</Optimize>
-        <OutputPath>bin\Debug\</OutputPath>
+        <OutputPath>bin\Debug\$(TargetFramework)</OutputPath>
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
@@ -26,7 +30,7 @@
         <PlatformTarget>AnyCPU</PlatformTarget>
         <DebugType>pdbonly</DebugType>
         <Optimize>true</Optimize>
-        <OutputPath>bin\Release\</OutputPath>
+        <OutputPath>bin\Release\$(TargetFramework)</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
