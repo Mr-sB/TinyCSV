@@ -7,8 +7,7 @@ Tiny CSV toolkit for .NET. Easy to read and write CSV table.
 
 ## Feature
 * Easy to read and write csv table.
-* First line are headers.
-* Second line are descriptions.
+* Custom header lines.
 * Support choose new line style.
 
 |     Environment     | Unix | NonUnix  |
