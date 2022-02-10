@@ -34,7 +34,7 @@ namespace TinyCSV
         /// <param name="cellSeparator">CSV cells separator.</param>
         /// <param name="supportCellMultiline">If true, support multiline cells but slower, otherwise not support multiline cells but faster.</param>
         /// <param name="readRecordCount">Read how many record rows. Negative means all records.</param>
-        public CSVTableWriter(string svContent, int headerRow, char cellSeparator = CSVDataHelper.CommaCharacter, bool supportCellMultiline = true, int readRecordCount = -1) : this()
+        public CSVTableWriter(string svContent, int headerRow, char cellSeparator = CSVDataHelper.CommaCharacter, bool supportCellMultiline = true, int readRecordCount = -1) : this(cellSeparator)
         {
             CellSeparator = cellSeparator;
             string[] rows = svContent.GetCSVRowArray(cellSeparator, supportCellMultiline, readRecordCount >= 0 ? readRecordCount + headerRow : readRecordCount);
@@ -57,7 +57,7 @@ namespace TinyCSV
         /// <param name="csvTableReader">CSVTableReader.</param>
         /// <param name="cellSeparator">CSV cells separator.</param>
         /// <param name="readRecordCount">Read how many record rows. Negative means all records.</param>
-        public CSVTableWriter(CSVTableReader csvTableReader, char cellSeparator = CSVDataHelper.CommaCharacter, int readRecordCount = -1) : this()
+        public CSVTableWriter(CSVTableReader csvTableReader, char cellSeparator = CSVDataHelper.CommaCharacter, int readRecordCount = -1) : this(cellSeparator)
         {
             CellSeparator = cellSeparator;
             Headers = new List<List<string>>(csvTableReader.HeaderRow);

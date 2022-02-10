@@ -4,7 +4,7 @@ namespace TinyCSV
 {
     public class CSVRecordReader
     {
-        public readonly string[] CellArray;
+        public readonly string[] Cells;
         public char CellSeparator;
         private StringBuilder mStringBuilder;
 
@@ -17,7 +17,7 @@ namespace TinyCSV
         public CSVRecordReader(string record, char cellSeparator = CSVDataHelper.CommaCharacter, int capacity = 0)
         {
             CellSeparator = cellSeparator;
-            CellArray = record.GetCSVDecodeRow(cellSeparator, capacity).ToArray();
+            Cells = record.GetCSVDecodeRow(cellSeparator, capacity).ToArray();
         }
 
         public string GetDecodeRow()
@@ -31,9 +31,9 @@ namespace TinyCSV
                 mStringBuilder = new StringBuilder();
             else
                 mStringBuilder.Clear();
-            for (int i = 0, len = CellArray.Length; i < len; i++)
+            for (int i = 0, len = Cells.Length; i < len; i++)
             {
-                mStringBuilder.Append(CellArray[i]);
+                mStringBuilder.Append(Cells[i]);
                 if(i < len - 1)
                     mStringBuilder.Append(cellSeparator);
             }

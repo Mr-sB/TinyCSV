@@ -13,9 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - `Headers` change from one dimension to two dimensions.
+- `CellArray` rename to `Cells`.
 
 ### Removed
-- Table `Descriptions`.
+- Table `Descriptions` and `RawCSVContent`.
+- Record `RawRecord`.
 
 ## [1.2.0] - 2020-09-18
 ### Added

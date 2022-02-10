@@ -46,7 +46,7 @@ namespace TinyCSV
         /// </summary>
         /// <param name="csvRecordReader">CSVRecordReader.</param>
         /// <param name="cellSeparator">CSV cells separator.</param>
-        public CSVRecordWriter(CSVRecordReader csvRecordReader, char cellSeparator = CSVDataHelper.CommaCharacter) : this(csvRecordReader.CellArray, cellSeparator)
+        public CSVRecordWriter(CSVRecordReader csvRecordReader, char cellSeparator = CSVDataHelper.CommaCharacter) : this(csvRecordReader.Cells, cellSeparator)
         {
         }
 
