@@ -6,14 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2022-02-11
+### Added
+- CSVRecord add `Column` field.
+
+### Changed
+- Table `Headers` type change to CSVRecord array/list.
+- `CSVRecordWriter` implements `IEnumerable<string>`.
+- Rename `CSVRecordWriter.AddCell` to `CSVRecordWriter.Add`.
+- Rename `CSVRecordWriter.RemoveCell` to `CSVRecordWriter.RemoveAt`.
+
 ## [1.3.0] - 2022-02-10
 ### Added
 - `CSVTableReader` and `CSVTableWriter` constructors add `headerRow` and `readRecordCount` parameters.
 - `CSVDataHelper.GetCSVRowArray` and `CSVDataHelper.GetCSVRowList` add `rowCount` parameter.
 
 ### Changed
-- `Headers` change from one dimension to two dimensions.
-- `CellArray` rename to `Cells`.
+- Table `Headers` change from one dimension to two dimensions.
+- Rename `CellArray` to `Cells`.
 
 ### Removed
 - Table `Descriptions` and `RawCSVContent`.

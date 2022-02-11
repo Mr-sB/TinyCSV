@@ -1,6 +1,6 @@
 # TinyCSV
 <p align="left">
-  <a href="https://github.com/Mr-sB/TinyCSV/releases"><img src="https://img.shields.io/badge/version-1.3.0-blue" alt="Version 1.3.0"></a>
+  <a href="https://github.com/Mr-sB/TinyCSV/releases"><img src="https://img.shields.io/badge/version-1.3.1-blue" alt="Version 1.3.0"></a>
 </p>
 
 Tiny CSV toolkit for .NET. Easy to read and write CSV table.
@@ -34,12 +34,12 @@ CSVTableReader csvTableReader = new CSVTableReader(csv, 2, ',');
 //Create a empty csv writer.
 CSVTableWriter csvTableWriter = new CSVTableWriter()
     //Add headers.
-    .AddHeader(new List<string>{"Data1", "Data2"})
-    .AddHeader(new List<string>{"string", "int"})
+    .AddHeader(new CSVRecordWriter {"Data1", "Data2"})
+    .AddHeader(new CSVRecordWriter {"string", "int"})
     //Add records.
     .AddRecord(new CSVRecordWriter()
-        .AddCell("string with double quote\" and comma, and \n\\n and \r\n\\r\\n")
-        .AddCell("1"));
+        .Add("string with double quote\" and comma, and \n\\n and \r\n\\r\\n")
+        .Add("1"));
 //Get csv form string, custom cell separator and choose new line style.
 string csv = csvTableWriter.GetEncodeTable(',', NewLineStyle.NonUnix);
 //Create csv writer from csv content.

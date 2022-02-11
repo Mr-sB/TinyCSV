@@ -7,7 +7,7 @@ namespace TinyCSV
     /// </summary>
     public class CSVTableReader
     {
-        public readonly string[][] Headers;
+        public readonly CSVRecordReader[] Headers;
         public readonly int HeaderRow;
         public readonly CSVRecordReader[] Records;
         public readonly int RecordRow;
@@ -28,15 +28,15 @@ namespace TinyCSV
             CellSeparator = cellSeparator;
             string[] rows = svContent.GetCSVRowArray(cellSeparator, supportCellMultiline, readRecordCount >= 0 ? readRecordCount + headerRow : readRecordCount);
             int rowsLength = rows.Length;
-            Headers = new string[headerRow][];
+            Headers = new CSVRecordReader[headerRow];
             for (int i = 0; i < headerRow; i++)
-                Headers[i] = i < rowsLength ? rows[i].GetCSVDecodeRow(cellSeparator).ToArray() : CSVDataHelper.EmptyStringArray;
+                Headers[i] = i < rowsLength ? new CSVRecordReader(rows[i], cellSeparator) : new CSVRecordReader();
             if (rowsLength > headerRow)
             {
                 //Remove headers
                 Records = new CSVRecordReader[rowsLength - headerRow];
                 for (int i = headerRow; i < rowsLength; i++)
-                    Records[i - headerRow] = new CSVRecordReader(rows[i], cellSeparator, Headers[0].Length);
+                    Records[i - headerRow] = new CSVRecordReader(rows[i], cellSeparator, Headers[0].Column);
             }
             else
                 Records = new CSVRecordReader[0];
@@ -63,14 +63,8 @@ namespace TinyCSV
             string newLine = newLineStyle.GetNewLine();
             foreach (var header in Headers)
             {
-                for (int i = 0, len = header.Length; i < len; i++)
-                {
-                    mStringBuilder.Append(header[i]);
-                    if (i < len - 1)
-                        mStringBuilder.Append(cellSeparator);
-                    else
-                        mStringBuilder.Append(newLine);
-                }
+                mStringBuilder.Append(header.GetDecodeRow(cellSeparator));
+                mStringBuilder.Append(newLine);
             }
 
             foreach (var record in Records)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace TinyCSV.Example
@@ -12,31 +11,12 @@ namespace TinyCSV.Example
             //Create a empty csv writer.
             CSVTableWriter csvTableWriter = new CSVTableWriter()
                 //Add headers.
-                .AddHeader(new List<string>{"Data1", "Data2", "Data3", "Data4", "Data5", "Data6"})
-                .AddHeader(new List<string>{"int", "Color", "int", "string", "string", "int[]"})
+                .AddHeader(new CSVRecordWriter {"Data1", "Data2", "Data3", "Data4", "Data5", "Data6"})
+                .AddHeader(new CSVRecordWriter {"int", "Color", "int", "string", "string", "int[]"})
                 //Add records.
-                .AddRecord(new CSVRecordWriter()
-                    .AddCell("1")
-                    .AddCell("#aaaaaa")
-                    .AddCell("2")
-                    .AddCell("normal string")
-                    .AddCell("\"string with double quote")
-                    .AddCell("1;2;3|4;5;6")
-                )
-                .AddRecord(new CSVRecordWriter()
-                    .AddCell("2")
-                    .AddCell("#bbbbbb")
-                    .AddCell("4")
-                    .AddCell("string with, comma")
-                    .AddCell("string\" with\", comma and \"double quote")
-                    .AddCell("7;8;9|10;11;12|7;7;7"))
-                .AddRecord(new CSVRecordWriter()
-                    .AddCell("3")
-                    .AddCell("#ccc")
-                    .AddCell("5")
-                    .AddCell("string with \n \\n and \r\n \\r\\n")
-                    .AddCell("string\" with \n \\n and \", comma and \"double quote and \r\n \\r\\n")
-                    .AddCell("7;8;9|10;11;12|7;7;7"));
+                .AddRecord(new CSVRecordWriter {"1", "#aaaaaa", "2", "normal string", "\"string with double quote", "1;2;3|4;5;6"})
+                .AddRecord(new CSVRecordWriter {"2", "#bbbbbb", "4", "string with, comma", "string\" with\", comma and \"double quote", "7;8;9|10;11;12|7;7;7"})
+                .AddRecord(new CSVRecordWriter{ "3", "#ccc", "5", "string with \n \\n and \r\n \\r\\n", "string\" with \n \\n and \", comma and \"double quote and \r\n \\r\\n", "7;8;9|10;11;12|7;7;7"});
             //Get csv form string.
             string csv1 = csvTableWriter.GetEncodeTable();
             Console.WriteLine("Write to csv form:\n" + csv1);
@@ -56,14 +36,14 @@ namespace TinyCSV.Example
             foreach (var header in csvTableWriter2.Headers)
                 header.RemoveAt(5);
             foreach (var record in csvTableWriter2.Records)
-                record.RemoveCell(5);
+                record.RemoveAt(5);
             //Add new record. AddRecord method will set CSVRecordWriter.CellSeparator.
             csvTableWriter2.AddRecord(new CSVRecordWriter()
-                .AddCell("100")
-                .AddCell("#cccccc")
-                .AddCell("5")
-                .AddCell("string with; semicolon")
-                .AddCell("string\" with\"; semicolon and \"double quote"));
+                .Add("100")
+                .Add("#cccccc")
+                .Add("5")
+                .Add("string with; semicolon")
+                .Add("string\" with\"; semicolon and \"double quote"));
             //Get csv form string, choose new line style.
             string csv2 = csvTableWriter2.GetEncodeTable(NewLineStyle.NonUnix);
             Console.WriteLine("Write to csv form:\n" + csv2);

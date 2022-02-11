@@ -5,9 +5,21 @@ namespace TinyCSV
     public class CSVRecordReader
     {
         public readonly string[] Cells;
+        public readonly int Column;
         public char CellSeparator;
         private StringBuilder mStringBuilder;
 
+        /// <summary>
+        /// Create a CSVRecordReader.
+        /// </summary>
+        /// <param name="cellSeparator">CSV cells separator.</param>
+        public CSVRecordReader(char cellSeparator = CSVDataHelper.CommaCharacter)
+        {
+            CellSeparator = cellSeparator;
+            Cells = CSVDataHelper.EmptyStringArray;
+            Column = 0;
+        }
+        
         /// <summary>
         /// Create a CSVRecordReader.
         /// </summary>
@@ -17,7 +29,8 @@ namespace TinyCSV
         public CSVRecordReader(string record, char cellSeparator = CSVDataHelper.CommaCharacter, int capacity = 0)
         {
             CellSeparator = cellSeparator;
-            Cells = record.GetCSVDecodeRow(cellSeparator, capacity).ToArray();
+            Cells = record != null ? record.GetCSVDecodeRow(cellSeparator, capacity).ToArray() : CSVDataHelper.EmptyStringArray;
+            Column = Cells.Length;
         }
 
         public string GetDecodeRow()

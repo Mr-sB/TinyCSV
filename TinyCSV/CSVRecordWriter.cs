@@ -1,11 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace TinyCSV
 {
-    public class CSVRecordWriter
+    public class CSVRecordWriter : IEnumerable<string>
     {
         public readonly List<string> Cells;
+        public int Column => Cells.Count;
         public char CellSeparator;
 
         /// <summary>
@@ -45,18 +47,26 @@ namespace TinyCSV
         /// Create a CSVRecordWriter by CSVRecordReader.
         /// </summary>
         /// <param name="csvRecordReader">CSVRecordReader.</param>
+        public CSVRecordWriter(CSVRecordReader csvRecordReader) : this(csvRecordReader.Cells, csvRecordReader.CellSeparator)
+        {
+        }
+        
+        /// <summary>
+        /// Create a CSVRecordWriter by CSVRecordReader.
+        /// </summary>
+        /// <param name="csvRecordReader">CSVRecordReader.</param>
         /// <param name="cellSeparator">CSV cells separator.</param>
-        public CSVRecordWriter(CSVRecordReader csvRecordReader, char cellSeparator = CSVDataHelper.CommaCharacter) : this(csvRecordReader.Cells, cellSeparator)
+        public CSVRecordWriter(CSVRecordReader csvRecordReader, char cellSeparator) : this(csvRecordReader.Cells, cellSeparator)
         {
         }
 
-        public CSVRecordWriter AddCell(string cell)
+        public CSVRecordWriter Add(string cell)
         {
             Cells.Add(cell);
             return this;
         }
         
-        public CSVRecordWriter RemoveCell(int index)
+        public CSVRecordWriter RemoveAt(int index)
         {
             try
             {
@@ -78,10 +88,20 @@ namespace TinyCSV
         {
             return Cells.GetCSVEncodeRow(cellSeparator);
         }
-        
+
         public override string ToString()
         {
             return GetEncodeRow();
+        }
+
+        public IEnumerator<string> GetEnumerator()
+        {
+            return Cells.GetEnumerator();
+        }
+        
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
