@@ -1,8 +1,10 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace TinyCSV
 {
-    public class CSVRecordReader
+    public class CSVRecordReader : IEnumerable<string>
     {
         public readonly string[] Cells;
         public readonly int Column;
@@ -58,6 +60,62 @@ namespace TinyCSV
         public override string ToString()
         {
             return GetDecodeRow();
+        }
+        
+        public IEnumerator<string> GetEnumerator()
+        {
+            return new Enumerator(Cells);
+        }
+        
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+        
+        public struct Enumerator : IEnumerator<string>
+        {
+            private readonly string[] _array;
+            private int _index;
+            private string _current;
+
+            public Enumerator(string[] array)
+            {
+                _array = array;
+                _index = 0;
+                _current = default;
+            }
+
+            public void Dispose()
+            {
+            }
+
+            public bool MoveNext()
+            {
+                if (_index < _array.Length)
+                {
+                    _current = _array[_index];
+                    _index++;
+                    return true;
+                }
+                return MoveNextRare();
+            }
+
+            private bool MoveNextRare()
+            {
+                _index = _array.Length + 1;
+                _current = default;
+                return false;
+            }
+
+            public string Current => _current;
+
+            object IEnumerator.Current => _current;
+
+            void IEnumerator.Reset()
+            {
+                _index = 0;
+                _current = default;
+            }
         }
     }
 }
