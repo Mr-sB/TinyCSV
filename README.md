@@ -8,11 +8,11 @@ Tiny CSV toolkit for .NET. Easy to read and write CSV table.
 ## Feature
 * Easy to read and write csv table.
 * Custom header lines.
-* Support choose new line style.
+* Support choose new line style:
 
-|     Environment     | Unix | NonUnix  |
-| :-----------------: | :--: | :------: |
-| Environment.NewLine |  \n  |   \r\n   |
+|     Environment     |  Unix  |  NonUnix  |
+| :-----------------: | :----: | :-------: |
+| Environment.NewLine |   \n   |    \r\n   |
 * Support cell's form:
 
 | contain cells separators | contain double quotes | custom cells separator | multiline |
