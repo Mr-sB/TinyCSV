@@ -112,15 +112,20 @@ namespace TinyCSV
                                 stringBuilder.Clear();
                                 //Skip new line string.
                                 csvIndex += newLineSeparatorLen - 1;
-                                isCellBeginning = true;
-                                cellNeedEscape = false;
-                                passEvenDoubleQuotes = false;
                                 break;
                             }
                         }
                     }
                     if (!isNewLine)
                         stringBuilder.Append(ch);
+                    else
+                    {
+                        // Reset to new line status
+                        isCellBeginning = true;
+                        cellNeedEscape = false;
+                        passEvenDoubleQuotes = false;
+                        continue;
+                    }
                 }
                 isCellBeginning = false;
             }

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.3] - 2025-04-07
+### Fix
+- Line starts with `"` cause line separator fault.
+
 ## [1.3.2] - 2022-11-16
 ### Added
 - `CSVRecordReader` implements `IEnumerable<string>`.
@@ -68,7 +72,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Read and write csv form feature. Support table cells contain commas and double quotes.
 
-[Unreleased]: https://github.com/Mr-sB/TinyCSV/compare/v1.3.2...HEAD
+[Unreleased]: https://github.com/Mr-sB/TinyCSV/compare/v1.3.3...HEAD
+[1.3.3]: https://github.com/Mr-sB/TinyCSV/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/Mr-sB/TinyCSV/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/Mr-sB/TinyCSV/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/Mr-sB/TinyCSV/compare/v1.2.0...v1.3.0
